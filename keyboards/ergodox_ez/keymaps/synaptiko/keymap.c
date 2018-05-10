@@ -1,22 +1,40 @@
 #include "../../ergodox_ez.h"
 
 enum custom_keycodes {
-  PLACEHOLDER = SAFE_RANGE, // can always be here
-  EPRM,
+  EPRM = SAFE_RANGE,
   RGB_SLD,
-  // macros for typing czech diacritics with compose key on linux (AltGr)
-  a_ACUTE, e_ACUTE, i_ACUTE, o_ACUTE, y_ACUTE, u_ACUTE,
-  e_CARON, z_CARON, c_CARON, s_CARON, r_CARON, t_CARON, d_CARON, n_CARON,
-  u_RING_ABOVE,
 
+  // TODO jprokop: rename; add some prefix?
+
+  DIACRITICS_LOCK,
+  DIACRITICS_SHIFT,
+
+  OSL_1_OR_2, // if it 1 or 2 layer is based on DIACRITICS_LOCK
+  TO_BASE_LAYER, // cancel one-shot & go to base layer
+
+  // macros for typing czech diacritics with compose key on linux (AltGr)
   A_ACUTE, E_ACUTE, I_ACUTE, O_ACUTE, Y_ACUTE, U_ACUTE,
   E_CARON, Z_CARON, C_CARON, S_CARON, R_CARON, T_CARON, D_CARON, N_CARON,
   U_RING_ABOVE,
 
   // useful compose key combos
-  X_TIMES, TRIPLE_DOT, TM
+  X_TIMES, TRIPLE_DOT, TM,
+
+  // other macros
+  TURBO_DELETE,
+  // TODO jprokop: implement
+  /* SELECTION_PASTE, MUSIC_PAUSE, MUSIC_VOLUME, CALL_VOLUME, KEYBOARD_CHEATSHEET */
 };
 
+enum layers {
+  L_BASE, // base
+  L_PROG, // programming
+  L_DIAC, // czech diacritics
+  L_MISC  // miscellaneous functions
+};
+
+// TODO jprokop: implement One-Shot-Double-Tap-Toggle (Tap for One-Shot key or Toggle; fast Double-Tap to turn the layer on)
+//               => can be used for all 1st, 2nd and 3rd layer
 /* Layer switch keys legend:
  * [Tap-Toggle]
  *  If you hold the key down, the layer becomes active,
@@ -49,22 +67,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * \  LCtrl | Win |  ⯅  |  ⯆  | LAlt|                             |  ⯇  |  ⯈  |  [{ | ]}  |RCtrl/↵ /
  *  `-------------------------------'                             '-------------------------------'
  *                               .---------------.   .---------------.
- *                               |  [2]  |  [3]  |   |       |       |
+ *                               |DIACR_L|       |   |       |       |
  *                       .-------+-------+-------|   |-------+-------+-------.
  *                       |       |       |       |   |       |       |       |
- *                       | Space |  (1)  |-------|   |-------| Enter |  ⌫    |
- *                       |       |       |  (4)  |   | AltGr |       |       |
+ *                       | Space | (1/2) |-------|   |-------| Enter |  ⌫    |
+ *                       |       |       |  [4]  |   | AltGr |       |       |
  *                       '-----------------------'   '-----------------------'
  */
-[0] = KEYMAP(
+[L_BASE] = KEYMAP(
     // left hand
     KC_GRAVE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_DELETE,
     KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_HOME,
     KC_ESCAPE, KC_A, KC_S, KC_D, KC_F, KC_G,
     KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_END,
     CTL_T(KC_NO), GUI_T(KC_NO), KC_UP, KC_DOWN, KC_LALT,
-    TT(2), TT(3), KC_TRANSPARENT,
-    KC_SPACE, OSL(1), OSL(4),
+    DIACRITICS_LOCK, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_SPACE, OSL_1_OR_2, TT(L_MISC),
 
     // right hand
     KC_BSLASH, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINUS,
@@ -77,13 +95,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 /* .----------------------------------------------. .----------------------------------------------.
- * |        |     |     |     |     |     |       | |       |     |     |     |     |     |        |
+ * |        |  F1 |  F2 |  F3 |  F4 |  F5 |TurbDel| |       |  F6 |  F7 |  F8 |  F9 | F10 |        |
  * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
- * |        |     |     |     |     |     |       | |       |     |     |  !  |     |  +  |   =    |
+ * |        |     |     |     |     |     |       | |       | F11 | F12 |  !  |     |  +  |   =    |
  * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
  * |   <0>  |     |  [  |  {  |  (  |  <  |-------| |-------|  >  |  )  |  }  |  ]  |  &  |   |    |
  * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
- * |        |     |     |     |     |     |       | |       |     |     |     |     |  \  |        |
+ * |        |     |  ×  |     |     |     |       | |       |     |  ™  |     |  …  |  \  |        |
  * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
  * \        |     |     |     |     |                             |     |     |     |     |        /
  *  `-------------------------------'                             '-------------------------------'
@@ -95,99 +113,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                       |       |       |       |   |       |       |       |
  *                       '-----------------------'   '-----------------------'
  */
-[1] = KEYMAP(
+[L_PROG] = KEYMAP(
     // left hand
+    KC_TRANSPARENT, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, TURBO_DELETE,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    TO(0), KC_TRANSPARENT, KC_LBRACKET, KC_LCBR, KC_LPRN, KC_LABK,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    TO_BASE_LAYER, KC_TRANSPARENT, KC_LBRACKET, KC_LCBR, KC_LPRN, KC_LABK,
+    KC_TRANSPARENT, KC_TRANSPARENT, X_TIMES, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
     // right hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_EXLM, KC_TRANSPARENT, KC_PLUS, KC_EQUAL,
+    KC_TRANSPARENT, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_F11, KC_F12, KC_EXLM, KC_TRANSPARENT, KC_PLUS, KC_EQUAL,
     KC_RABK, KC_RPRN, KC_RCBR, KC_RBRACKET, KC_AMPR, KC_PIPE,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_BSLASH, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
-),
-
-/* .----------------------------------------------. .----------------------------------------------.
- * |        |  F1 |  F2 |  F3 |  F4 |  F5 |       | |       |  F6 |  F7 |  F8 |  F9 | F10 |  Mute  |
- * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
- * |        |     | MCL | M⯅  | MCR | Menu| Win+  | |       |     |     | F11 | F12 |Pause| VolUp  |
- * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
- * |   <0>  |     | M⯇  | M⯆  | M⯈  | MWU |-------| |-------|     |     |     |     |     | VolDn  |
- * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
- * |        |     | MWL | MCM | MWR | MWD |       | |       |     |     |     |     |     |        |
- * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
- * \        |     |     |     |     |                             |     |     |     |     |        /
- *  `-------------------------------'                             '-------------------------------'
- *                               .---------------.   .---------------.
- *                               |       |       |   |       |       |
- *                       .-------+-------+-------|   |-------+-------+-------.
- *                       |       |       |       |   |       |       |       |
- *                       |       |       |-------|   |-------|       |       |
- *                       |       |       |       |   |       |       |       |
- *                       '-----------------------'   '-----------------------'
- */
-[2] = KEYMAP(
-    // left hand
-    KC_TRANSPARENT, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_BTN1, KC_MS_UP, KC_MS_BTN2, KC_APPLICATION, LGUI(KC_PSCREEN),
-    TO(0), KC_TRANSPARENT, KC_MS_LEFT, KC_MS_DOWN, KC_MS_RIGHT, KC_MS_WH_UP,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_LEFT, KC_MS_BTN3, KC_MS_WH_RIGHT, KC_MS_WH_DOWN, KC_PSCREEN,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-
-    // right hand
-    KC_TRANSPARENT, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_AUDIO_MUTE,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_F11, KC_F12, LALT(LSFT(KC_P)), KC_AUDIO_VOL_UP,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_VOL_DOWN,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
-),
-
-/* .----------------------------------------------. .----------------------------------------------.
- * |        |     |     |     |     |     |       | |       |     |     |     |     |     |        |
- * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
- * |        |     |     |     |Reset|     |       | |       |APaus| Anim|     |     |     |        |
- * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
- * |   <0>  |     |     |     |     |     |-------| |-------|LTogg| Bri+| Bri-|     |     |        |
- * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
- * |        |     |     |     |     |     |       | |       |     | Hue+| Hue-|     |     |        |
- * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
- * \        |     |     |     |     |                             |     |     |     |     |        /
- *  `-------------------------------'                             '-------------------------------'
- *                               .---------------.   .---------------.
- *                               |       |       |   |       |       |
- *                       .-------+-------+-------|   |-------+-------+-------.
- *                       |       |       |       |   |       |       |       |
- *                       |       |       |-------|   |-------|       |       |
- *                       |       |       |       |   |       |       |       |
- *                       '-----------------------'   '-----------------------'
- */
-[3] = KEYMAP(
-    // left hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, RESET, KC_TRANSPARENT, KC_TRANSPARENT,
-    TO(0), KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-
-    // right hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, RGB_SLD, RGB_MOD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    RGB_TOG, RGB_VAI, RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, RGB_HUI, RGB_HUD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, TM, KC_TRANSPARENT, TRIPLE_DOT, KC_BSLASH, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
@@ -195,13 +135,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 // Reference: https://en.wikiversity.org/wiki/Typing_Czech
 /* .----------------------------------------------. .----------------------------------------------.
- * |        |     |     |  e  |     |     |       | |       |     |     |  u  |     |     |        |
+ * |        |     |     |  ěĚ |     |     |TurbDel| |       |     |     |  ůŮ |     |     |        |
  * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
- * |        |     |     |  e  |  r  |  t  |       | |       |  y  |  u  |  i  |  o  |     |        |
+ * |        |     |     |  éÉ |  řŘ |  ťŤ |       | |       |  ýÝ |  úÚ |  íÍ |  óÓ |     |        |
  * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
- * |   <0>  |  a  |  s  |  d  |     |     |-------| |-------|     |     |     |     |     |        |
+ * |   <0>  |  áÁ |  šŠ |  ďĎ |     |     |-------| |-------|     |     |     |     |     |        |
  * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
- * |   (5)  |  z  |  ×  |  c  |     |     |       | |       |  n  |  ™  |     |  …  |     |  (5)   |
+ * |DIACR_SH|  žŽ |  ×  |  čČ |     |     |       | |       |  ňŇ |  ™  |     |  …  |     |DIACR_SH|
  * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
  * \        |     |     |     |     |                             |     |     |     |     |        /
  *  `-------------------------------'                             '-------------------------------'
@@ -209,55 +149,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                               |       |       |   |       |       |
  *                       .-------+-------+-------|   |-------+-------+-------.
  *                       |       |       |       |   |       |       |       |
- *                       |       |       |-------|   |-------|       |       |
- *                       |       |       |  (~4) |   |       |       |       |
- *                       '-----------------------'   '-----------------------'
- */
-[4] = KEYMAP(
-    // left hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, e_CARON, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, e_ACUTE, r_CARON, t_CARON, KC_TRANSPARENT,
-    TO(0), a_ACUTE, s_CARON, d_CARON, KC_TRANSPARENT, KC_TRANSPARENT,
-    OSL(5), z_CARON, X_TIMES, c_CARON, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-
-    // right hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, u_RING_ABOVE, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, y_ACUTE, u_ACUTE, i_ACUTE, o_ACUTE, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, n_CARON, TM, KC_TRANSPARENT, TRIPLE_DOT, KC_TRANSPARENT, OSL(5),
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
-),
-
-/* .----------------------------------------------. .----------------------------------------------.
- * |        |     |     |  E  |     |     |       | |       |     |     |  U  |     |     |        |
- * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
- * |        |     |     |  E  |  R  |  T  |       | |       |  Y  |  U  |  I  |  O  |     |        |
- * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
- * |   <0>  |  A  |  S  |  D  |     |     |-------| |-------|     |     |     |     |     |        |
- * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
- * |   (~5) |  Z  |     |  C  |     |     |       | |       |  N  |     |     |     |     |  (~5)  |
- * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
- * \        |     |     |     |     |                             |     |     |     |     |        /
- *  `-------------------------------'                             '-------------------------------'
- *                               .---------------.   .---------------.
- *                               |       |       |   |       |       |
- *                       .-------+-------+-------|   |-------+-------+-------.
- *                       |       |       |       |   |       |       |       |
- *                       |       |       |-------|   |-------|       |       |
+ *                       |       |  (~2) |-------|   |-------|       |       |
  *                       |       |       |       |   |       |       |       |
  *                       '-----------------------'   '-----------------------'
  */
-[5] = KEYMAP(
+[L_DIAC] = KEYMAP(
     // left hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, E_CARON, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, E_CARON, KC_TRANSPARENT, KC_TRANSPARENT, TURBO_DELETE,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, E_ACUTE, R_CARON, T_CARON, KC_TRANSPARENT,
-    TO(0), A_ACUTE, S_CARON, D_CARON, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, Z_CARON, KC_TRANSPARENT, C_CARON, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    TO_BASE_LAYER, A_ACUTE, S_CARON, D_CARON, KC_TRANSPARENT, KC_TRANSPARENT,
+    DIACRITICS_SHIFT, Z_CARON, X_TIMES, C_CARON, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
@@ -266,8 +167,47 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, U_RING_ABOVE, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, Y_ACUTE, U_ACUTE, I_ACUTE, O_ACUTE, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, N_CARON, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, N_CARON, TM, KC_TRANSPARENT, TRIPLE_DOT, KC_TRANSPARENT, DIACRITICS_SHIFT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
+),
+
+/* .----------------------------------------------. .----------------------------------------------.
+ * |  Reset |  F1 |  F2 |  F3 |  F4 |  F5 |TurbDel| |       |  F6 |  F7 |  F8 |  F9 | F10 |  Mute  |
+ * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
+ * |        |     | MCL | M⯅  | MCR | Menu| Win+  | |       | F11 | F12 |     |     |Pause| VolUp  |
+ * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
+ * |   <0>  |     | M⯇  | M⯆  | M⯈  | MWU |-------| |-------|     |     |     |     |     | VolDn  |
+ * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
+ * |        |     | MWL | MCM | MWR | MWD |       | |       |     |     |     |     |     |        |
+ * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
+ * \StopAnim| Anim| Bri+| Bri-|Toggl|                             |Hue⯇ |Hue⯈ |     |     |        /
+ *  `-------------------------------'                             '-------------------------------'
+ *                               .---------------.   .---------------.
+ *                               |       |       |   |       |       |
+ *                       .-------+-------+-------|   |-------+-------+-------.
+ *                       |       |       |       |   |       |       |       |
+ *                       |       |       |-------|   |-------|       |       |
+ *                       |       |       |       |   |       |       |       |
+ *                       '-----------------------'   '-----------------------'
+ */
+[L_MISC] = KEYMAP(
+    // left hand
+    RESET, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, TURBO_DELETE,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_BTN1, KC_MS_UP, KC_MS_BTN2, KC_APPLICATION, LGUI(KC_PSCREEN),
+    TO_BASE_LAYER, KC_TRANSPARENT, KC_MS_LEFT, KC_MS_DOWN, KC_MS_RIGHT, KC_MS_WH_UP,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_LEFT, KC_MS_BTN3, KC_MS_WH_RIGHT, KC_MS_WH_DOWN, KC_PSCREEN,
+    RGB_SLD, RGB_MOD, RGB_VAI, RGB_VAD, RGB_TOG,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+
+    // right hand
+    KC_TRANSPARENT, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_AUDIO_MUTE,
+    KC_TRANSPARENT, KC_F11, KC_F12, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_P)), KC_AUDIO_VOL_UP,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_VOL_DOWN,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    RGB_HUI, RGB_HUD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
 ),
@@ -275,16 +215,48 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 const uint16_t PROGMEM fn_actions[] = {
-  [1] = ACTION_LAYER_TAP_TOGGLE(1)
+  /* TODO jprokop: figure why is it here */
+  /* [1] = ACTION_LAYER_TAP_TOGGLE(1) */
 };
 
-void matrix_init_user(void) {
-#ifdef RGBLIGHT_COLOR_LAYER_0
-  rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
-#endif
-};
+void matrix_init_user(void) {};
+
+bool isDiacriticsActive = false;
+bool isDiacriticsShiftPressed = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case DIACRITICS_LOCK:
+      if (record->event.pressed) {
+        isDiacriticsActive = !isDiacriticsActive;
+
+        if (IS_LAYER_ON(isDiacriticsActive ? L_PROG : L_DIAC)) {
+          layer_off(isDiacriticsActive ? L_PROG : L_DIAC);
+          set_oneshot_layer(isDiacriticsActive ? L_DIAC : L_PROG, get_oneshot_layer_state());
+        }
+      }
+      return false;
+    case DIACRITICS_SHIFT:
+      isDiacriticsShiftPressed = record->event.pressed;
+      return false;
+    case OSL_1_OR_2:
+      if (record->event.pressed) {
+        if (IS_LAYER_ON(isDiacriticsActive ? L_DIAC : L_PROG)) {
+          reset_oneshot_layer();
+          layer_move(L_BASE);
+        }
+        else {
+          set_oneshot_layer(isDiacriticsActive ? L_DIAC : L_PROG, ONESHOT_START);
+        }
+      }
+      else {
+        if (IS_LAYER_ON(isDiacriticsActive ? L_DIAC : L_PROG)) {
+          clear_oneshot_layer_state(ONESHOT_PRESSED);
+        }
+      }
+      return false;
+  }
+
   if (record->event.pressed) {
     switch (keycode) {
       case EPRM:
@@ -293,146 +265,168 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case RGB_SLD:
         rgblight_mode(1);
         return false;
+      case TO_BASE_LAYER:
+        reset_oneshot_layer();
+        layer_move(L_BASE);
+        return false;
     }
 
     // diacritics macros
     switch (keycode) {
-      case a_ACUTE:
-        SEND_STRING(SS_RALT("'a"));
-        layer_off(4);
-        return false;
-      case e_ACUTE:
-        SEND_STRING(SS_RALT("'e"));
-        layer_off(4);
-        return false;
-      case i_ACUTE:
-        SEND_STRING(SS_RALT("'i"));
-        layer_off(4);
-        return false;
-      case o_ACUTE:
-        SEND_STRING(SS_RALT("'o"));
-        layer_off(4);
-        return false;
-      case y_ACUTE:
-        SEND_STRING(SS_RALT("'y"));
-        layer_off(4);
-        return false;
-      case u_ACUTE:
-        SEND_STRING(SS_RALT("'u"));
-        layer_off(4);
-        return false;
-      case e_CARON:
-        SEND_STRING(SS_RALT("<e"));
-        layer_off(4);
-        return false;
-      case z_CARON:
-        SEND_STRING(SS_RALT("<z"));
-        layer_off(4);
-        return false;
-      case c_CARON:
-        SEND_STRING(SS_RALT("<c"));
-        layer_off(4);
-        return false;
-      case s_CARON:
-        SEND_STRING(SS_RALT("<s"));
-        layer_off(4);
-        return false;
-      case r_CARON:
-        SEND_STRING(SS_RALT("<r"));
-        layer_off(4);
-        return false;
-      case t_CARON:
-        SEND_STRING(SS_RALT("<t"));
-        layer_off(4);
-        return false;
-      case d_CARON:
-        SEND_STRING(SS_RALT("<d"));
-        layer_off(4);
-        return false;
-      case n_CARON:
-        SEND_STRING(SS_RALT("<n"));
-        layer_off(4);
-        return false;
-      case u_RING_ABOVE:
-        SEND_STRING(SS_RALT("*u"));
-        layer_off(4);
-        return false;
-
       case A_ACUTE:
-        SEND_STRING(SS_RALT("'A"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("'A"));
+        }
+        else {
+          SEND_STRING(SS_RALT("'a"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case E_ACUTE:
-        SEND_STRING(SS_RALT("'E"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("'E"));
+        }
+        else {
+          SEND_STRING(SS_RALT("'e"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case I_ACUTE:
-        SEND_STRING(SS_RALT("'I"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("'I"));
+        }
+        else {
+          SEND_STRING(SS_RALT("'i"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case O_ACUTE:
-        SEND_STRING(SS_RALT("'O"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("'O"));
+        }
+        else {
+          SEND_STRING(SS_RALT("'o"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case Y_ACUTE:
-        SEND_STRING(SS_RALT("'Y"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("'Y"));
+        }
+        else {
+          SEND_STRING(SS_RALT("'y"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case U_ACUTE:
-        SEND_STRING(SS_RALT("'U"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("'U"));
+        }
+        else {
+          SEND_STRING(SS_RALT("'u"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case E_CARON:
-        SEND_STRING(SS_RALT("<E"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<E"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<e"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case Z_CARON:
-        SEND_STRING(SS_RALT("<Z"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<Z"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<z"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case C_CARON:
-        SEND_STRING(SS_RALT("<C"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<C"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<c"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case S_CARON:
-        SEND_STRING(SS_RALT("<S"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<S"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<s"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case R_CARON:
-        SEND_STRING(SS_RALT("<R"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<R"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<r"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case T_CARON:
-        SEND_STRING(SS_RALT("<T"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<T"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<t"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case D_CARON:
-        SEND_STRING(SS_RALT("<D"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<D"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<d"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case N_CARON:
-        SEND_STRING(SS_RALT("<N"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("<N"));
+        }
+        else {
+          SEND_STRING(SS_RALT("<n"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case U_RING_ABOVE:
-        SEND_STRING(SS_RALT("*U"));
-        layer_off(5);
+        if (isDiacriticsShiftPressed) {
+          SEND_STRING(SS_RALT("*U"));
+        }
+        else {
+          SEND_STRING(SS_RALT("*u"));
+        }
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
-    }
 
-    // useful compose key combos
-    switch (keycode) {
+      // other useful compose key combos
       case X_TIMES:
         SEND_STRING(SS_RALT("xx"));
-        layer_off(4);
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case TRIPLE_DOT:
         SEND_STRING(SS_RALT(".."));
-        layer_off(4);
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
       case TM:
         SEND_STRING(SS_RALT("tm"));
-        layer_off(4);
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
+        return false;
+
+      // other macros
+      case TURBO_DELETE:
+        SEND_STRING(SS_LCTRL(SS_LSFT(SS_TAP(X_BSPACE)))SS_LCTRL(SS_LSFT(SS_TAP(X_DELETE))));
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         return false;
     }
   }
@@ -441,71 +435,72 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 uint32_t layer_state_set_user(uint32_t state) {
-    uint8_t layer = biton32(state);
+  // TODO jprokop: implement colors later
+  uint8_t layer = biton32(state);
 
-    ergodox_board_led_off();
-    ergodox_right_led_1_off();
-    ergodox_right_led_2_off();
-    ergodox_right_led_3_off();
+  ergodox_board_led_off();
+  ergodox_right_led_1_off();
+  ergodox_right_led_2_off();
+  ergodox_right_led_3_off();
 
-    switch (layer) {
-      case 0:
-        #ifdef RGBLIGHT_COLOR_LAYER_0
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
-        #endif
-        break;
-      case 1:
-        ergodox_right_led_1_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_1
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_1);
-        #endif
-        break;
-      case 2:
-        ergodox_right_led_2_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_2
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_2);
-        #endif
-        break;
-      case 3:
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_3
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_3);
-        #endif
-        break;
-      case 4:
-        ergodox_right_led_1_on();
-        ergodox_right_led_2_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_4
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_4);
-        #endif
-        break;
-      case 5:
-        ergodox_right_led_1_on();
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_5
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_5);
-        #endif
-        break;
-      case 6:
-        ergodox_right_led_2_on();
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_6
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_6);
-        #endif
-        break;
-      case 7:
-        ergodox_right_led_1_on();
-        ergodox_right_led_2_on();
-        ergodox_right_led_3_on();
-        #ifdef RGBLIGHT_COLOR_LAYER_7
-          rgblight_setrgb(RGBLIGHT_COLOR_LAYER_7);
-        #endif
-        break;
-      default:
-        break;
-    }
+  switch (layer) {
+    case 0:
+      #ifdef RGBLIGHT_COLOR_LAYER_0
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_0);
+      #endif
+      break;
+    case 1:
+      ergodox_right_led_1_on();
+      #ifdef RGBLIGHT_COLOR_LAYER_1
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_1);
+      #endif
+      break;
+    case 2:
+      ergodox_right_led_2_on();
+      #ifdef RGBLIGHT_COLOR_LAYER_2
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_2);
+      #endif
+      break;
+    case 3:
+      ergodox_right_led_3_on();
+      #ifdef RGBLIGHT_COLOR_LAYER_3
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_3);
+      #endif
+      break;
+    case 4:
+      ergodox_right_led_1_on();
+      ergodox_right_led_2_on();
+      #ifdef RGBLIGHT_COLOR_LAYER_4
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_4);
+      #endif
+      break;
+    case 5:
+      ergodox_right_led_1_on();
+      ergodox_right_led_3_on();
+      #ifdef RGBLIGHT_COLOR_LAYER_5
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_5);
+      #endif
+      break;
+    case 6:
+      ergodox_right_led_2_on();
+      ergodox_right_led_3_on();
+      #ifdef RGBLIGHT_COLOR_LAYER_6
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_6);
+      #endif
+      break;
+    case 7:
+      ergodox_right_led_1_on();
+      ergodox_right_led_2_on();
+      ergodox_right_led_3_on();
+      #ifdef RGBLIGHT_COLOR_LAYER_7
+        rgblight_setrgb(RGBLIGHT_COLOR_LAYER_7);
+      #endif
+      break;
+    default:
+      break;
+  }
 
-    return state;
+  return state;
 };
 
 // Template for layout
