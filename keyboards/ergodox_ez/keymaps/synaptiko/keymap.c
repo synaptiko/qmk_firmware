@@ -5,6 +5,7 @@ enum custom_keycodes {
 
   // layer macros
   MC_TO_BASE_LAYER, // cancel one-shot & go to base layer
+  MC_TO_PROG_LAYER, // go to programming layer directly
   MC_TO_PROG_OR_DIAC_LAYER, // if it 1 or 2 layer is based on MC_DIACRITICS_LOCK
   MC_TO_MISC_LAYER, // go to misc layer
 
@@ -60,7 +61,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |--------+-----+-----+-----+-----+-----|  End  | | PgDn  |-----+-----+-----+-----+-----+--------|
    * | LShift |  zZ |  xX |  cC |  vV |  bB |       | |       |  nN |  mM |  ,< |  .> |  /? | RShift |
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-   * \  LCtrl | Win |  ⯅  |  ⯆  | LAlt|                             |  ⯇  |  ⯈  |  [{ | ]}  |RCtrl/↵ /
+   * \  LCtrl | Win |  ⯅  |  ⯆  | LAlt|                             |  ⯇  |  ⯈  |  [{ | ]}  |  (1)   /
    *  `-------------------------------'                             '-------------------------------'
    *                               .---------------.   .---------------.
    *                               |DIACR_L|       |   |       |       |
@@ -70,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    *                       |       |       |  (4)  |   | AltGr |       |       |
    *                       '-----------------------'   '-----------------------'
    */
-  [L_BASE] = KEYMAP(
+  [L_BASE] = LAYOUT_ergodox(
     // left hand
     KC_GRAVE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_DELETE,
     KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_HOME,
@@ -85,7 +86,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_PGUP, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_EQUAL,
     KC_H, KC_J, KC_K, KC_L, KC_SCOLON, KC_QUOTE,
     KC_PGDOWN, KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT,
-    KC_LEFT, KC_RIGHT, KC_LBRACKET, KC_RBRACKET, RCTL_T(KC_ENTER),
+    KC_LEFT, KC_RIGHT, KC_LBRACKET, KC_RBRACKET, MC_TO_PROG_LAYER,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_RALT, KC_ENTER, KC_BSPACE
   ),
@@ -93,10 +94,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* .----------------------------------------------. .----------------------------------------------.
    * |        |  F1 |  F2 |  F3 |  F4 |  F5 |TurbDel| |       |  F6 |  F7 |  F8 |  F9 | F10 |        |
    * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-   * |        |     |     |     |     |     |       | |       | F11 | F12 |  !  |     |  +  |   =    |
+   * |        |     |     |     |     |     |       | |       | F12 | F11 |  !  |  -  |  +  |   =    |
    * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
-   * |   <0>  |     |  [  |  {  |  (  |  <  |-------| |-------|  >  |  )  |  }  |  ]  |  &  |   |    |
-   * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
+   * |   <0>  |     |  [  |  (  |  {  |  <  |-------| |-------|  >  |  }  |  )  |  ]  |  &  |   |    |
+   * |--------+-----+-----+-----+-----+-----| Enter | |       |-----+-----+-----+-----+-----+--------|
    * |        |     |  ×  |     |SelPs|     |       | |       |     |  ™  |     |  …  |  \  |        |
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
    * \        |     |     |     |     |                             |     |     |     |     |        /
@@ -109,20 +110,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    *                       |       |       |       |   |       |       |       |
    *                       '-----------------------'   '-----------------------'
    */
-  [L_PROG] = KEYMAP(
+  [L_PROG] = LAYOUT_ergodox(
     // left hand
     KC_TRANSPARENT, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, MC_TURBO_DELETE,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    MC_TO_BASE_LAYER, KC_TRANSPARENT, KC_LBRACKET, KC_LCBR, KC_LPRN, KC_LABK,
-    KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_X_TIMES, KC_TRANSPARENT, MC_SELECTION_PASTE, KC_TRANSPARENT, KC_TRANSPARENT,
+    MC_TO_BASE_LAYER, KC_TRANSPARENT, KC_LBRACKET, KC_LPRN, KC_LCBR, KC_LABK,
+    KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_X_TIMES, KC_TRANSPARENT, MC_SELECTION_PASTE, KC_TRANSPARENT, KC_ENTER,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
     // right hand
     KC_TRANSPARENT, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_F11, KC_F12, KC_EXLM, KC_TRANSPARENT, KC_PLUS, KC_EQUAL,
-    KC_RABK, KC_RPRN, KC_RCBR, KC_RBRACKET, KC_AMPR, KC_PIPE,
+    KC_TRANSPARENT, KC_F12, KC_F11, KC_EXLM, KC_MINUS, KC_PLUS, KC_EQUAL,
+    KC_RABK, KC_RCBR, KC_RPRN, KC_RBRACKET, KC_AMPR, KC_PIPE,
     KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_TM, KC_TRANSPARENT, MC_CK_TRIPLE_DOT, KC_BSLASH, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
@@ -135,7 +136,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |        |     |     |  éÉ |  řŘ |  ťŤ |       | |       |  ýÝ |  úÚ |  íÍ |  óÓ |     |        |
    * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
    * |   <0>  |  áÁ |  šŠ |  ďĎ |     |     |-------| |-------|     |     |     |     |     |        |
-   * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
+   * |--------+-----+-----+-----+-----+-----| Enter | |       |-----+-----+-----+-----+-----+--------|
    * |DiacShft|  žŽ |  ×  |  čČ |     |     |       | |       |  ňŇ |  ™  |     |  …  |     |DiacShft|
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
    * \        |     |     |     |     |                             |     |     |     |     |        /
@@ -148,12 +149,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    *                       |       |       |       |   |       |       |       |
    *                       '-----------------------'   '-----------------------'
    */
-  [L_DIAC] = KEYMAP(
+  [L_DIAC] = LAYOUT_ergodox(
     // left hand
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_CARON_E, KC_TRANSPARENT, KC_TRANSPARENT, MC_TURBO_DELETE,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_E, MC_CK_CARON_R, MC_CK_CARON_T, KC_TRANSPARENT,
     MC_TO_BASE_LAYER, MC_CK_ACUTE_A, MC_CK_CARON_S, MC_CK_CARON_D, KC_TRANSPARENT, KC_TRANSPARENT,
-    MC_DIACRITICS_SHIFT, MC_CK_CARON_Z, MC_CK_X_TIMES, MC_CK_CARON_C, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    MC_DIACRITICS_SHIFT, MC_CK_CARON_Z, MC_CK_X_TIMES, MC_CK_CARON_C, KC_TRANSPARENT, KC_TRANSPARENT, KC_ENTER,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
@@ -169,42 +170,42 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   /* .----------------------------------------------. .----------------------------------------------.
-   * |  Reset |  F1 |  F2 |  F3 |  F4 |  F5 |TurbDel| |       |  F6 |  F7 |  F8 |  F9 | F10 |  Mute  |
+   * |  Reset |     |     |     |     |     |TurbDel| |       |     |     |     |     |     |  Mute  |
    * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-   * |        |     | MCL | M⯅  | MCR | Menu| Win+  | |       | F11 | F12 |     |     |Pause| VolCall|
+   * |        |     |     |     |     |     | Win+  | |       |     |     |     |     |Pause| VolCall|
    * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
-   * |   <0>  |KbChs| M⯇  | M⯆  | M⯈  | MWU |-------| |-------|     |     |     |     |     |  VolUp |
+   * |   <0>  |Hue⯇ |Hue⯈ |     |     |     |-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |  VolUp |
    * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
-   * |        |     | MWL | MCM | MWR | MWD |       | |       |     |     |     |     |     |  VolDn |
+   * | Toggle | Bri+| Bri-|     |     |     |       | |       |KbChs|     |     |     | MWD |  VolDn |
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-   * \StopAnim| Anim| Bri+| Bri-|Toggl|                             |Hue⯇ |Hue⯈ |     |     |VolMusic/
+   * \StopAnim| Anim|     |     |     |                             |     |     |     |     |VolMusic/
    *  `-------------------------------'                             '-------------------------------'
    *                               .---------------.   .---------------.
    *                               |       |       |   |       |       |
    *                       .-------+-------+-------|   |-------+-------+-------.
-   *                       |       |       |       |   |       |       |       |
-   *                       |       |       |-------|   |-------|       |       |
-   *                       |       |       |  (~4) |   |       |       |       |
+   *                       |       |       |       |   |  Menu |       |       |
+   *                       |       |       |-------|   |-------|  MCR  |  MCL  |
+   *                       |       |       |  (~4) |   |  MCM  |       |       |
    *                       '-----------------------'   '-----------------------'
    */
-  [L_MISC] = KEYMAP(
+  [L_MISC] = LAYOUT_ergodox(
     // left hand
-    RESET, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, MC_TURBO_DELETE,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_BTN1, KC_MS_UP, KC_MS_BTN2, KC_APPLICATION, LGUI(KC_PSCREEN),
-    MC_TO_BASE_LAYER, MC_KEYBOARD_CHEATSHEET, KC_MS_LEFT, KC_MS_DOWN, KC_MS_RIGHT, KC_MS_WH_UP,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_LEFT, KC_MS_BTN3, KC_MS_WH_RIGHT, KC_MS_WH_DOWN, KC_PSCREEN,
-    MC_RGB_SLD, RGB_MOD, RGB_VAI, RGB_VAD, RGB_TOG,
+    RESET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_TURBO_DELETE,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LGUI(KC_PSCREEN),
+    MC_TO_BASE_LAYER, RGB_HUI, RGB_HUD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    RGB_TOG, RGB_VAI, RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_PSCREEN,
+    MC_RGB_SLD, RGB_MOD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
     // right hand
-    KC_TRANSPARENT, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_AUDIO_MUTE,
-    KC_TRANSPARENT, KC_F11, KC_F12, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_P)), MC_AUDIO_VOL_CALL,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_VOL_UP,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_VOL_DOWN,
-    RGB_HUI, RGB_HUD, KC_TRANSPARENT, KC_TRANSPARENT, MC_AUDIO_VOL_MUSIC,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_MUTE,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_P)), MC_AUDIO_VOL_CALL,
+    KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_MS_WH_UP, KC_AUDIO_VOL_UP,
+    KC_TRANSPARENT, MC_KEYBOARD_CHEATSHEET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_AUDIO_VOL_DOWN,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_AUDIO_VOL_MUSIC,
+    KC_APPLICATION, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_MS_BTN3, KC_MS_BTN2, KC_MS_BTN1
   )
 };
 
@@ -315,6 +316,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case MC_DIACRITICS_SHIFT:
       is_diacritics_shift_pressed = record->event.pressed;
       return false;
+    case MC_TO_PROG_LAYER:
+      process_layer_event(L_PROG, record->event.pressed, false);
+      return false;
     case MC_TO_PROG_OR_DIAC_LAYER:
       process_layer_event(is_diacritics_active ? L_DIAC : L_PROG, record->event.pressed, false);
       return false;
@@ -324,6 +328,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case MC_TO_BASE_LAYER:
       process_layer_event(L_BASE, record->event.pressed, false);
       return false;
+    case KC_AUDIO_MUTE:
+      // for some freaking reason this particular key doesn't clear onesho layer state properly
+      // => do it manually; on our own
+      if (record->event.pressed) {
+        register_code(KC_AUDIO_MUTE);
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
+        return false;
+      }
+      else {
+        return true;
+      }
   }
 
   if (record->event.pressed) {
