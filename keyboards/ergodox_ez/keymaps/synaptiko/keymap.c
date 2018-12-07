@@ -1,18 +1,19 @@
 #include "../../ergodox_ez.h"
 
 enum custom_keycodes {
-  MC_RGB_SLD = SAFE_RANGE,
+  MC_DUMMY = SAFE_RANGE,
 
   // layer macros
   MC_TO_BASE_LAYER, // cancel one-shot & go to base layer
-  MC_TO_PROG_LAYER, // go to programming layer directly
-  MC_TO_PROG_OR_DIAC_LAYER, // if it's L_PROG, L_DIAC_CZ or L_DIAC_PL is based on MC_DIACRITICS_LOCK, MC_LANG_SWITCH
+  MC_TO_PROG_OR_DIAC_LAYER, // if it's L_PROG, L_DIAC_CZ or L_DIAC_PL is based on MC_DIACRITICS_LOCK
   MC_TO_MISC_LAYER, // go to misc layer
 
   // diacritics switching macros
   MC_DIACRITICS_LOCK,
-  MC_LANG_SWITCH,
   MC_DIACRITICS_SHIFT,
+
+  // special combo for easier switching between virtual consoles
+  MC_CTRL_ALT_PROG_LAYER,
 
   // macros for typing czech diacritics with compose key on linux (AltGr)
   MC_CK_ACUTE_A, MC_CK_ACUTE_E, MC_CK_ACUTE_I, MC_CK_ACUTE_O, MC_CK_ACUTE_Y, MC_CK_ACUTE_U,
@@ -25,6 +26,9 @@ enum custom_keycodes {
 
   // useful compose key combos
   MC_CK_X_TIMES, MC_CK_TRIPLE_DOT, MC_CK_TM,
+
+  // RGB brightness
+  MC_RGB_VAI, MC_RGB_VAD,
 
   // other macros
   // TODO jprokop: improve those macros
@@ -70,10 +74,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |--------+-----+-----+-----+-----+-----|  End  | | PgDn  |-----+-----+-----+-----+-----+--------|
    * | LShift |  zZ |  xX |  cC |  vV |  bB |       | |       |  nN |  mM |  ,< |  .> |  /? | RShift |
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-   * \  LCtrl | Win |  ⯅  |  ⯆  | LAlt|                             |  ⯇  |  ⯈  |  [{ | ]}  |  (1)   /
+   * \  LCtrl |     |  ⯅  |  ⯆  | LAlt|                             |  ⯇  |  ⯈  |  [{ | ]}  | C+A+(1)/
    *  `-------------------------------'                             '-------------------------------'
    *                               .---------------.   .---------------.
-   *                               |DIACR_L|LANG_SW|   |       |       |
+   *                               |DIACR_L|       |   |       |       |
    *                       .-------+-------+-------|   |-------+-------+-------.
    *                       |       |       |       |   |       |       |       |
    *                       | Space |(1/2/3)|-------|   |-------| Enter |  ⌫    |
@@ -86,8 +90,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_HOME,
     KC_ESCAPE, KC_A, KC_S, KC_D, KC_F, KC_G,
     KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_END,
-    CTL_T(KC_NO), GUI_T(KC_NO), KC_UP, KC_DOWN, KC_LALT,
-    MC_DIACRITICS_LOCK, MC_LANG_SWITCH, KC_TRANSPARENT,
+    CTL_T(KC_NO), KC_TRANSPARENT, KC_UP, KC_DOWN, KC_LALT,
+    MC_DIACRITICS_LOCK, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_SPACE, MC_TO_PROG_OR_DIAC_LAYER, MC_TO_MISC_LAYER,
 
     // right hand
@@ -95,7 +99,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_PGUP, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_EQUAL,
     KC_H, KC_J, KC_K, KC_L, KC_SCOLON, KC_QUOTE,
     KC_PGDOWN, KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT,
-    KC_LEFT, KC_RIGHT, KC_LBRACKET, KC_RBRACKET, MC_TO_PROG_LAYER,
+    KC_LEFT, KC_RIGHT, KC_LBRACKET, KC_RBRACKET, MC_CTRL_ALT_PROG_LAYER,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_RALT, KC_ENTER, KC_BSPACE
   ),
@@ -218,15 +222,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   /* .----------------------------------------------. .----------------------------------------------.
-   * |  Reset |     |     |     |     |     |       | |       |     |     |     |     |     |        |
+   * |  Reset |     |     |     |     |     |       | |       |     |     |     |     |     |  Bri+  |
    * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-   * |        |     |     |     |     |     | Win+  | |       |     |     |     |     |Pause|        |
+   * |        |     |     |     |     |     | Win+  | |       |     |     |     |     |Pause|  Bri-  |
    * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
-   * |   <0>  |Hue⯇ |Hue⯈ |     |     |     |-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |  VolUp |
+   * |   <0>  |     |     |     |     |     |-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |  VolUp |
    * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
-   * | Toggle | Bri+| Bri-|     |     |     |       | |       |KbChs|     |     |     | MWD |  VolDn |
+   * |        |     |     |     |     |     |       | |       |KbChs|     |     |     | MWD |  VolDn |
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-   * \StopAnim| Anim|     |     |     |                             |     |     |     |     |  Mute  /
+   * \        |     |     |     |     |                             |     |     |     |     |  Mute  /
    *  `-------------------------------'                             '-------------------------------'
    *                               .---------------.   .---------------.
    *                               |       |       |   |       |       |
@@ -240,15 +244,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // left hand
     RESET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LGUI(KC_PSCREEN),
-    MC_TO_BASE_LAYER, RGB_HUI, RGB_HUD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    RGB_TOG, RGB_VAI, RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_PSCREEN,
-    MC_RGB_SLD, RGB_MOD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    MC_TO_BASE_LAYER, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_PSCREEN,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
     // right hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_P)), KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_RGB_VAI,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_P)), MC_RGB_VAD,
     KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_MS_WH_UP, KC_AUDIO_VOL_UP,
     KC_TRANSPARENT, MC_KEYBOARD_CHEATSHEET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_AUDIO_VOL_DOWN,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_MUTE,
@@ -334,50 +338,51 @@ char shift_letter(char letter, bool shift) {
 
 const uint16_t PROGMEM fn_actions[] = {};
 
-void matrix_init_user(void) {};
-
 bool is_diacritics_active = false;
 bool is_diacritics_shift_pressed = false;
 
-size_t active_lang_index = 0;
+size_t active_lang_index = -1;
 const uint8_t langs[] = { L_DIAC_CZ, L_DIAC_PL };
 size_t langs_count = sizeof(langs) / sizeof(uint8_t);
+
+void update_leds_for_lang(void);
+
+uint8_t rgblight_val = 0;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case MC_DIACRITICS_LOCK:
       if (record->event.pressed) {
-        is_diacritics_active = !is_diacritics_active;
+        if (active_lang_index == -1) {
+          is_diacritics_active = true;
+          active_lang_index = 0;
 
-        if ((is_diacritics_active && IS_LAYER_ON(L_PROG)) || IS_LAYER_ON(langs[active_lang_index])) {
-          process_layer_event(is_diacritics_active ? langs[active_lang_index] : L_PROG, record->event.pressed, true);
+          if (IS_LAYER_ON(L_PROG)) {
+            process_layer_event(langs[active_lang_index], record->event.pressed, true);
+          }
+        } else {
+          size_t previous_active_lang_index = active_lang_index;
+          active_lang_index += 1;
+
+          if (active_lang_index == langs_count) {
+            is_diacritics_active = false;
+            active_lang_index = -1;
+
+            if (IS_LAYER_ON(langs[previous_active_lang_index])) {
+              process_layer_event(L_PROG, record->event.pressed, true);
+            }
+          } else {
+            if (IS_LAYER_ON(langs[previous_active_lang_index])) {
+              process_layer_event(langs[active_lang_index], record->event.pressed, true);
+            }
+          }
         }
 
-        if (is_diacritics_active
-            && (layer_state == 0 || IS_LAYER_ON(langs[active_lang_index]) || IS_LAYER_ON(L_PROG))
-        ) {
-          ergodox_right_led_3_on();
-        }
-        else {
-          ergodox_right_led_3_off();
-        }
-      }
-      return false;
-    case MC_LANG_SWITCH:
-      if (record->event.pressed) {
-        size_t previous_active_lang_index = active_lang_index;
-        active_lang_index = (active_lang_index + 1) % langs_count;
-
-        if (is_diacritics_active && IS_LAYER_ON(langs[previous_active_lang_index])) {
-          process_layer_event(langs[active_lang_index], record->event.pressed, true);
-        }
+        update_leds_for_lang();
       }
       return false;
     case MC_DIACRITICS_SHIFT:
       is_diacritics_shift_pressed = record->event.pressed;
-      return false;
-    case MC_TO_PROG_LAYER:
-      process_layer_event(L_PROG, record->event.pressed, false);
       return false;
     case MC_TO_PROG_OR_DIAC_LAYER:
       process_layer_event(is_diacritics_active ? langs[active_lang_index] : L_PROG, record->event.pressed, false);
@@ -387,6 +392,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
     case MC_TO_BASE_LAYER:
       process_layer_event(L_BASE, record->event.pressed, false);
+      return false;
+    case MC_CTRL_ALT_PROG_LAYER:
+      if (record->event.pressed) {
+        register_code(KC_LCTL);
+        register_code(KC_LALT);
+      } else {
+        unregister_code(KC_LALT);
+        unregister_code(KC_LCTL);
+      }
+      process_layer_event(L_PROG, record->event.pressed, false);
       return false;
     case KC_AUDIO_MUTE:
       // for some freaking reason this particular key doesn't clear oneshot layer state properly
@@ -402,12 +417,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   if (record->event.pressed) {
-    switch (keycode) {
-      case MC_RGB_SLD:
-        rgblight_mode(1);
-        return false;
-    }
-
     // diacritics macros
     switch (keycode) {
       case MC_CK_ACUTE_A:
@@ -491,6 +500,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         type_compose_key_combo('t', 'm');
         return false;
 
+      // RGB brightness
+      case MC_RGB_VAI:
+        if (record->event.pressed) {
+          rgblight_sethsv_noeeprom(330, 255, rgblight_val);
+          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
+          // following call will save new color + value to eeprom,
+          // that's why above it's switched to the base layer color
+          rgblight_increase_val();
+          rgblight_val = rgblight_get_val();
+          // and here we switch back to misc layer color
+          rgblight_sethsv_noeeprom(51, 255, rgblight_val);
+          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+        }
+        return false;
+      case MC_RGB_VAD:
+        if (record->event.pressed) {
+          rgblight_sethsv_noeeprom(330, 255, rgblight_val);
+          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
+          // following call will save new color + value to eeprom,
+          // that's why above it's switched to the base layer color
+          rgblight_decrease_val();
+          rgblight_val = rgblight_get_val();
+          // and here we switch back to misc layer color
+          rgblight_sethsv_noeeprom(51, 255, rgblight_val);
+          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+        }
+        return false;
+
       // other macros
       case MC_SELECTION_PASTE:
         SEND_STRING(SS_TAP(X_F15)); // handled in my i3 config
@@ -506,38 +543,65 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-uint32_t layer_state_set_user(uint32_t state) {
-  uint8_t layer = biton32(state);
+void matrix_init_user(void) {
+  rgblight_init();
+  rgblight_val = rgblight_get_val();
+}
 
-  ergodox_board_led_off();
-  ergodox_right_led_1_off();
-  ergodox_right_led_2_off();
-  ergodox_right_led_3_off();
+uint32_t layer_state_set_rgb(uint32_t state) {
+  uint8_t layer = biton32(state);
 
   switch (layer) {
     case L_BASE:
-    case L_PROG:
-    case L_DIAC_CZ:
-    case L_DIAC_PL:
-      if (is_diacritics_active) {
-        ergodox_right_led_3_on();
-      }
+      rgblight_sethsv_noeeprom(330, 255, rgblight_val);
+      rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
       break;
-  }
-
-  switch (layer) {
     case L_PROG:
+      rgblight_sethsv_noeeprom(16, 176, rgblight_val);
+      rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+      break;
     case L_DIAC_CZ:
-      ergodox_right_led_1_on();
+      rgblight_sethsv_noeeprom(186, 102, rgblight_val);
+      rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
       break;
     case L_DIAC_PL:
+      rgblight_sethsv_noeeprom(150, 255, rgblight_val);
+      rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+      break;
     case L_MISC:
-      ergodox_right_led_2_on();
+      rgblight_sethsv_noeeprom(51, 255, rgblight_val);
+      rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
       break;
   }
 
   return state;
+}
+
+uint32_t layer_state_set_user(uint32_t state) {
+  ergodox_board_led_off();
+  ergodox_right_led_1_off();
+
+  update_leds_for_lang();
+  state = layer_state_set_rgb(state);
+
+  return state;
 };
+
+void update_leds_for_lang(void) {
+  ergodox_right_led_2_off();
+  ergodox_right_led_3_off();
+
+  if (is_diacritics_active) {
+    switch (langs[active_lang_index]) {
+      case L_DIAC_CZ:
+        ergodox_right_led_3_on();
+        break;
+      case L_DIAC_PL:
+        ergodox_right_led_2_on();
+        break;
+    }
+  }
+}
 
 // Template for layout
 /* .----------------------------------------------. .----------------------------------------------.
