@@ -34,7 +34,11 @@ enum custom_keycodes {
   // TODO jprokop: improve those macros
   MC_SELECTION_PASTE, MC_KEYBOARD_CHEATSHEET,
   // TODO jprokop: add macros for time tracking
+
+  DYNAMIC_MACRO_RANGE,
 };
+
+#include "dynamic_macro.h"
 
 enum layers {
   L_BASE, // base
@@ -77,9 +81,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * \  LCtrl |     |  ⯅  |  ⯆  | LAlt|                             |  ⯇  |  ⯈  |  [{ | ]}  | C+A+(1)/
    *  `-------------------------------'                             '-------------------------------'
    *                               .---------------.   .---------------.
-   *                               |DIACR_L|       |   |       |       |
+   *                               |DIACR_L|       |   |  PM1  |  RMS  |
    *                       .-------+-------+-------|   |-------+-------+-------.
-   *                       |       |       |       |   |       |       |       |
+   *                       |       |       |       |   |  PM2  |       |       |
    *                       | Space |(1/2/3)|-------|   |-------| Enter |  ⌫    |
    *                       |       |       |  (4)  |   | AltGr |       |       |
    *                       '-----------------------'   '-----------------------'
@@ -100,7 +104,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_H, KC_J, KC_K, KC_L, KC_SCOLON, KC_QUOTE,
     KC_PGDOWN, KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT,
     KC_LEFT, KC_RIGHT, KC_LBRACKET, KC_RBRACKET, MC_CTRL_ALT_PROG_LAYER,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    DYN_MACRO_PLAY1, DYN_REC_STOP, DYN_MACRO_PLAY2,
     KC_RALT, KC_ENTER, KC_BSPACE
   ),
 
@@ -222,7 +226,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   /* .----------------------------------------------. .----------------------------------------------.
-   * |  Reset |     |     |     |     |     |       | |       |     |     |     |     |     |  Bri+  |
+   * |  Reset | RM1 | RM2 |     |     |     |       | |       |     |     |     |     |     |  Bri+  |
    * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
    * |        |     |     |     |     |     | Win+  | |       |     |     |     |     |Pause|  Bri-  |
    * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
@@ -242,7 +246,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    */
   [L_MISC] = LAYOUT_ergodox(
     // left hand
-    RESET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    RESET, DYN_REC_START1, DYN_REC_START2, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LGUI(KC_PSCREEN),
     MC_TO_BASE_LAYER, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_PSCREEN,
@@ -349,7 +353,18 @@ void update_leds_for_lang(void);
 
 uint8_t rgblight_val = 0;
 
+bool was_any_other_key_pressed = false;
+bool is_first_desktop_active = true;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (!process_record_dynamic_macro(keycode, record)) {
+    return false;
+  }
+
+  if (keycode != MC_CTRL_ALT_PROG_LAYER) {
+    was_any_other_key_pressed = true;
+  }
+
   switch (keycode) {
     case MC_DIACRITICS_LOCK:
       if (record->event.pressed) {
@@ -395,13 +410,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
     case MC_CTRL_ALT_PROG_LAYER:
       if (record->event.pressed) {
+        was_any_other_key_pressed = false;
         register_code(KC_LCTL);
         register_code(KC_LALT);
+        process_layer_event(L_PROG, true, false);
       } else {
+        if (was_any_other_key_pressed) {
+          process_layer_event(L_PROG, false, false);
+        }
+        else {
+          process_layer_event(L_BASE, true, false);
+          process_layer_event(L_BASE, false, false);
+
+          if (is_first_desktop_active) {
+            SEND_STRING(SS_TAP(X_F2));
+          } else {
+            SEND_STRING(SS_TAP(X_F1));
+          }
+
+          is_first_desktop_active = !is_first_desktop_active;
+        }
+
         unregister_code(KC_LALT);
         unregister_code(KC_LCTL);
       }
-      process_layer_event(L_PROG, record->event.pressed, false);
       return false;
     case KC_AUDIO_MUTE:
       // for some freaking reason this particular key doesn't clear oneshot layer state properly
