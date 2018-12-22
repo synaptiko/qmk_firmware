@@ -28,7 +28,7 @@ enum custom_keycodes {
   MC_CK_X_TIMES, MC_CK_TRIPLE_DOT, MC_CK_TM,
 
   // RGB brightness
-  MC_RGB_VAI, MC_RGB_VAD,
+  MC_RGB_VAI, MC_RGB_VAD, MC_RGB_TOG,
 
   // other macros
   // TODO jprokop: improve those macros
@@ -226,7 +226,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   /* .----------------------------------------------. .----------------------------------------------.
-   * |  Reset | RM1 | RM2 |     |     |     |       | |       |     |     |     |     |     |  Bri+  |
+   * |  Reset | RM1 | RM2 |     |     |     |       | |       |     |     |     |     |RGBTg|  Bri+  |
    * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
    * |        |     |     |     |     |     | Win+  | |       |     |     |     |     |Pause|  Bri-  |
    * |--------+-----+-----+-----+-----+-----| PrntS | |       |-----+-----+-----+-----+-----+--------|
@@ -255,7 +255,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
     // right hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_RGB_VAI,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_RGB_TOG, MC_RGB_VAI,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LALT(LSFT(KC_P)), MC_RGB_VAD,
     KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_MS_WH_UP, KC_AUDIO_VOL_UP,
     KC_TRANSPARENT, MC_KEYBOARD_CHEATSHEET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_AUDIO_VOL_DOWN,
@@ -436,16 +436,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     case KC_AUDIO_MUTE:
-      // for some freaking reason this particular key doesn't clear oneshot layer state properly
-      // => do it manually; on our own
+      // this particular key doesn't clear oneshot layer state properly
+      // => do it manually
       if (record->event.pressed) {
-        register_code(KC_AUDIO_MUTE);
         clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
-        return false;
       }
-      else {
-        return true;
-      }
+      return true;
   }
 
   if (record->event.pressed) {
@@ -557,6 +553,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           // and here we switch back to misc layer color
           rgblight_sethsv_noeeprom(51, 255, rgblight_val);
           rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+        }
+        return false;
+      case MC_RGB_TOG:
+        if (record->event.pressed) {
+          rgblight_sethsv_noeeprom(330, 255, rgblight_val);
+          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
+          // following call will save new color + value to eeprom,
+          // that's why above it's switched to the base layer color
+          rgblight_toggle();
+          rgblight_val = rgblight_get_val();
+          // and here we switch back to misc layer color
+          rgblight_sethsv_noeeprom(51, 255, rgblight_val);
+          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+          // we have to clear layer state manually (similar to mute)
+          clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         }
         return false;
 
