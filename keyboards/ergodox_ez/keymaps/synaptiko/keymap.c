@@ -356,7 +356,24 @@ uint8_t rgblight_val = 0;
 bool was_any_other_key_pressed = false;
 bool is_first_desktop_active = true;
 
+// RGBLight timeout feature
+#define RGBLIGHT_TIMEOUT 5 // in minutes
+uint16_t idle_timer = 0;
+uint8_t halfmin_counter = 0;
+bool rgblight_enabled = true;
+bool rgblight_on = true;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (rgblight_enabled) {
+    if (rgblight_on == false) {
+      rgblight_enable_noeeprom();
+      rgblight_on = true;
+    }
+
+    idle_timer = timer_read();
+    halfmin_counter = 0;
+  }
+
   if (!process_record_dynamic_macro(keycode, record)) {
     return false;
   }
@@ -557,15 +574,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
       case MC_RGB_TOG:
         if (record->event.pressed) {
-          rgblight_sethsv_noeeprom(330, 255, rgblight_val);
-          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
-          // following call will save new color + value to eeprom,
-          // that's why above it's switched to the base layer color
-          rgblight_toggle();
-          rgblight_val = rgblight_get_val();
-          // and here we switch back to misc layer color
-          rgblight_sethsv_noeeprom(51, 255, rgblight_val);
-          rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+          rgblight_enabled = !rgblight_enabled;
+
+          if (rgblight_enabled) {
+            rgblight_enable_noeeprom();
+
+            idle_timer = timer_read();
+            halfmin_counter = 0;
+          } else {
+            rgblight_disable_noeeprom();
+          }
           // we have to clear layer state manually (similar to mute)
           clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         }
@@ -589,6 +607,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void matrix_init_user(void) {
   rgblight_init();
   rgblight_val = rgblight_get_val();
+}
+
+void matrix_scan_user(void) {
+  if (rgblight_enabled) {
+    // idle_timer needs to be set one time
+    if (idle_timer == 0) idle_timer = timer_read();
+
+    if (rgblight_on) {
+      if (timer_elapsed(idle_timer) > 30000) {
+          halfmin_counter++;
+          idle_timer = timer_read();
+      }
+
+      if (halfmin_counter >= RGBLIGHT_TIMEOUT * 2) {
+          rgblight_disable_noeeprom();
+          rgblight_on = false;
+          halfmin_counter = 0;
+      }
+    }
+  }
 }
 
 uint32_t layer_state_set_rgb(uint32_t state) {
