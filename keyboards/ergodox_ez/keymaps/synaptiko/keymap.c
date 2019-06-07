@@ -548,27 +548,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       // RGB brightness
       case MC_RGB_VAI:
         if (record->event.pressed) {
-          rgblight_sethsv_noeeprom(330, 255, rgblight_val);
+          rgblight_sethsv_noeeprom(233, 255, rgblight_val);
           rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
           // following call will save new color + value to eeprom,
           // that's why above it's switched to the base layer color
           rgblight_increase_val();
           rgblight_val = rgblight_get_val();
           // and here we switch back to misc layer color
-          rgblight_sethsv_noeeprom(51, 255, rgblight_val);
+          rgblight_sethsv_noeeprom(36, 255, rgblight_val);
           rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
         }
         return false;
       case MC_RGB_VAD:
         if (record->event.pressed) {
-          rgblight_sethsv_noeeprom(330, 255, rgblight_val);
+          rgblight_sethsv_noeeprom(233, 255, rgblight_val);
           rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
           // following call will save new color + value to eeprom,
           // that's why above it's switched to the base layer color
           rgblight_decrease_val();
           rgblight_val = rgblight_get_val();
           // and here we switch back to misc layer color
-          rgblight_sethsv_noeeprom(51, 255, rgblight_val);
+          rgblight_sethsv_noeeprom(36, 255, rgblight_val);
           rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
         }
         return false;
@@ -634,23 +634,23 @@ uint32_t layer_state_set_rgb(uint32_t state) {
 
   switch (layer) {
     case L_BASE:
-      rgblight_sethsv_noeeprom(330, 255, rgblight_val);
+      rgblight_sethsv_noeeprom(233, 255, rgblight_val);
       rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT);
       break;
     case L_PROG:
-      rgblight_sethsv_noeeprom(16, 176, rgblight_val);
+      rgblight_sethsv_noeeprom(11, 176, rgblight_val);
       rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
       break;
     case L_DIAC_CZ:
-      rgblight_sethsv_noeeprom(186, 102, rgblight_val);
+      rgblight_sethsv_noeeprom(131, 102, rgblight_val);
       rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
       break;
     case L_DIAC_PL:
-      rgblight_sethsv_noeeprom(150, 255, rgblight_val);
+      rgblight_sethsv_noeeprom(106, 255, rgblight_val);
       rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
       break;
     case L_MISC:
-      rgblight_sethsv_noeeprom(51, 255, rgblight_val);
+      rgblight_sethsv_noeeprom(36, 255, rgblight_val);
       rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
       break;
   }
