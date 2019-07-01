@@ -148,11 +148,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   /* .----------------------------------------------. .----------------------------------------------.
-   * |        |     |     |  ěĚ |     |     |       | |       |     |     |  ůŮ |     |     |        |
+   * |        |     |     |     |     |     |       | |       |     |     |     |     |     |        |
    * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-   * |        |     |     |  éÉ |  řŘ |  ťŤ |       | |       |  ýÝ |  úÚ |  íÍ |  óÓ |     |        |
+   * |        |     |  ěĚ |  éÉ |  řŘ |  ťŤ |       | |       |  ýÝ |  ůŮ |  íÍ |  óÓ |     |        |
    * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
-   * |   <0>  |  áÁ |  šŠ |  ďĎ |     |     |-------| |-------|     |     |     |     |     |        |
+   * |   <0>  |  áÁ |  šŠ |  ďĎ |     |     |-------| |-------|     |  úÚ |     |     |     |        |
    * |--------+-----+-----+-----+-----+-----| Enter | |       |-----+-----+-----+-----+-----+--------|
    * |DiacShft|  žŽ |     |  čČ |     |     |       | |       |  ňŇ |     |     |  …  |     |DiacShft|
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
@@ -168,8 +168,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    */
   [L_DIAC_CZ] = LAYOUT_ergodox(
     // left hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_CARON_E, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_E, MC_CK_CARON_R, MC_CK_CARON_T, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_CARON_E, MC_CK_ACUTE_E, MC_CK_CARON_R, MC_CK_CARON_T, KC_TRANSPARENT,
     MC_TO_BASE_LAYER, MC_CK_ACUTE_A, MC_CK_CARON_S, MC_CK_CARON_D, KC_TRANSPARENT, KC_TRANSPARENT,
     MC_DIACRITICS_SHIFT, MC_CK_CARON_Z, KC_TRANSPARENT, MC_CK_CARON_C, KC_TRANSPARENT, KC_TRANSPARENT, KC_ENTER,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
@@ -177,9 +177,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
     // right hand
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_RING_ABOVE_U, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, MC_CK_ACUTE_Y, MC_CK_ACUTE_U, MC_CK_ACUTE_I, MC_CK_ACUTE_O, KC_TRANSPARENT, KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, MC_CK_ACUTE_Y, MC_CK_RING_ABOVE_U, MC_CK_ACUTE_I, MC_CK_ACUTE_O, KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, MC_CK_ACUTE_U, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, MC_CK_CARON_N, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_TRIPLE_DOT, KC_TRANSPARENT, MC_DIACRITICS_SHIFT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
@@ -193,9 +193,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
    * |   <0>  |  ąĄ |  śŚ |     |     |     |-------| |-------|     |     |     |  łŁ |     |        |
    * |--------+-----+-----+-----+-----+-----| Enter | |       |-----+-----+-----+-----+-----+--------|
-   * |DiacShft|  źŹ |     |  ćĆ |     |     |       | |       |  ńŃ |     |     |  …  |     |DiacShft|
+   * |DiacShft|  źŹ |  żŻ |  ćĆ |     |     |       | |       |  ńŃ |     |     |  …  |     |DiacShft|
    * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-   * \        |  żŻ |     |     |     |                             |     |     |     |     |        /
+   * \        |     |     |     |     |                             |     |     |     |     |        /
    *  `-------------------------------'                             '-------------------------------'
    *                               .---------------.   .---------------.
    *                               |       |       |   |       |       |
@@ -210,8 +210,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_OGON_E, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     MC_TO_BASE_LAYER, MC_CK_OGON_A, MC_CK_ACUTE_S, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-    MC_DIACRITICS_SHIFT, MC_CK_ACUTE_Z, KC_TRANSPARENT, MC_CK_ACUTE_C, KC_TRANSPARENT, KC_TRANSPARENT, KC_ENTER,
-    KC_TRANSPARENT, MC_CK_DOT_Z, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    MC_DIACRITICS_SHIFT, MC_CK_ACUTE_Z, MC_CK_DOT_Z, MC_CK_ACUTE_C, KC_TRANSPARENT, KC_TRANSPARENT, KC_ENTER,
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
