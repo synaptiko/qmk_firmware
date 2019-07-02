@@ -2,18 +2,17 @@
 #include "eeprom.h"
 
 enum planck_keycodes {
-  RGB_SLD = SAFE_RANGE,
-  TOGGLE_LAYER_COLOR,
-  EPRM,
+    RGB_SLD = SAFE_RANGE,
+    TOGGLE_LAYER_COLOR,
+    EPRM,
 };
 
 enum planck_layers {
-  _BASE,
-  _LOWER,
-  _RAISE,
-  _ADJUST,
+    _BASE,
+    _LOWER,
+    _RAISE,
+    _ADJUST,
 };
-
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
@@ -89,19 +88,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case EPRM:
-      if (record->event.pressed) {
-        eeconfig_init();
-      }
-      return false;
-    case RGB_SLD:
-      if (record->event.pressed) {
-        rgblight_mode(1);
-      }
-      return false;
-  }
-  return true;
+    switch (keycode) {
+        case EPRM:
+            if (record->event.pressed) {
+                eeconfig_init();
+            }
+            return false;
+        case RGB_SLD:
+            if (record->event.pressed) {
+                rgblight_mode(1);
+            }
+            return false;
+    }
+    return true;
 }
 
 uint32_t layer_state_set_user(uint32_t state) {
