@@ -255,87 +255,24 @@ void eeconfig_init_kb(void) {  // EEPROM is getting reset!
 #endif
 
 layer_state_t layer_state_set_kb(layer_state_t state) {
-    planck_ez_left_led_off();
-    planck_ez_right_led_off();
+    // TODO jprokop: following is required to avoid interacting with my own logic
+    // planck_ez_left_led_off();
+    // planck_ez_right_led_off();
     state = layer_state_set_user(state);
-    uint8_t layer = biton32(state);
-    switch (layer) {
-        case PLANCK_EZ_LED_LOWER:
-            planck_ez_left_led_on();
-            break;
-        case PLANCK_EZ_LED_RAISE:
-            planck_ez_right_led_on();
-            break;
-        case PLANCK_EZ_LED_ADJUST:
-            planck_ez_right_led_on();
-            planck_ez_left_led_on();
-            break;
-        default:
-            break;
-    }
+    // uint8_t layer = biton32(state);
+    // switch (layer) {
+    //     case PLANCK_EZ_LED_LOWER:
+    //         planck_ez_left_led_on();
+    //         break;
+    //     case PLANCK_EZ_LED_RAISE:
+    //         planck_ez_right_led_on();
+    //         break;
+    //     case PLANCK_EZ_LED_ADJUST:
+    //         planck_ez_right_led_on();
+    //         planck_ez_left_led_on();
+    //         break;
+    //     default:
+    //         break;
+    // }
     return state;
 }
-#endif
-
-bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case LED_LEVEL:
-            if (record->event.pressed) {
-                 keyboard_config.led_level++;
-                 if (keyboard_config.led_level > 4) {
-                    keyboard_config.led_level = 0;
-                 }
-                 planck_ez_right_led_level((uint8_t)keyboard_config.led_level * 255 / 4 );
-                 planck_ez_left_led_level((uint8_t)keyboard_config.led_level * 255 / 4 );
-                 eeconfig_update_kb(keyboard_config.raw);
-                 layer_state_set_kb(layer_state);
-            }
-            break;
-#ifdef RGB_MATRIX_ENABLE
-        case TOGGLE_LAYER_COLOR:
-            if (record->event.pressed) {
-                keyboard_config.disable_layer_led ^= 1;
-                if (keyboard_config.disable_layer_led)
-                    rgb_matrix_set_color_all(0, 0, 0);
-                eeconfig_update_kb(keyboard_config.raw);
-            }
-            break;
-        case RGB_TOG:
-            if (record->event.pressed) {
-              switch (rgb_matrix_get_flags()) {
-                case LED_FLAG_ALL: {
-                    rgb_matrix_set_flags(LED_FLAG_NONE);
-                    keyboard_config.rgb_matrix_enable = false;
-                    rgb_matrix_set_color_all(0, 0, 0);
-                  }
-                  break;
-                default: {
-                    rgb_matrix_set_flags(LED_FLAG_ALL);
-                    keyboard_config.rgb_matrix_enable = true;
-                  }
-                  break;
-              }
-              eeconfig_update_kb(keyboard_config.raw);
-            }
-            return false;
-#endif
-    }
-    return process_record_user(keycode, record);
-}
-#endif
-
-#ifdef AUDIO_ENABLE
-bool music_mask_kb(uint16_t keycode) {
-    switch (keycode) {
-    case QK_LAYER_TAP ... QK_ONE_SHOT_LAYER_MAX:
-    case QK_LAYER_TAP_TOGGLE ... QK_LAYER_MOD_MAX:
-    case QK_MOD_TAP ... QK_MOD_TAP_MAX:
-    case AU_ON ... MUV_DE:
-    case RESET:
-    case EEP_RST:
-        return false;
-    default:
-        return music_mask_user(keycode);
-    }
-}
-#endif
