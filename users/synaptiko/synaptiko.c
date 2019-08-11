@@ -4,40 +4,16 @@
 
 // NOTE: keep in sync with header file!
 hold_one_shot_double_tap_toggle_def T_BASE = { .main_layer = L_BASE };
-hold_one_shot_double_tap_toggle_def T_ALT_NUM = {
-    .main_layer = L_ALT_NUM,
-    .hold_modifiers = MOD_LALT
-};
-uint8_t alternate_main_layers_for_T_EXTEND[] = { L_PROG, L_DIAC_CZ, L_DIAC_PL };
+hold_one_shot_double_tap_toggle_def T_PROG = { .main_layer = L_PROG };
+uint8_t alternate_main_layers_for_T_EXTEND[] = { L_FKEYS, L_DIAC_CZ, L_DIAC_PL };
 hold_one_shot_double_tap_toggle_def T_EXTEND = {
-    .main_layer = L_PROG,
+    .main_layer = L_FKEYS,
     .alternate_main_layers = alternate_main_layers_for_T_EXTEND,
     .alternate_main_layers_count = 3,
-    .current_alternate_main_layer_idx = 0
+    .current_alternate_main_layer_idx = 0,
+    .hold_modifiers = MOD_LALT | MOD_LCTL
 };
 hold_one_shot_double_tap_toggle_def T_MISC = { .main_layer = L_MISC };
-void on_after_hold_tap_fn_for_T_VTTYS(void) {
-    static bool is_first_desktop_active = true;
-
-    register_code(KC_LCTL);
-    register_code(KC_LALT);
-    if (is_first_desktop_active) {
-        SEND_STRING(SS_TAP(X_F2));
-    } else {
-        SEND_STRING(SS_TAP(X_F1));
-    }
-    unregister_code(KC_LALT);
-    unregister_code(KC_LCTL);
-
-    is_first_desktop_active = !is_first_desktop_active;
-}
-hold_one_shot_double_tap_toggle_def T_VTTYS = {
-    .main_layer = L_BASE,
-    .hold_layer = L_FKEYS,
-    .hold_modifiers = MOD_LALT | MOD_LCTL,
-    .on_after_hold_tap_fn = on_after_hold_tap_fn_for_T_VTTYS
-};
-hold_one_shot_double_tap_toggle_def T_FKEYS = { .main_layer = L_FKEYS };
 
 void alternate_main_layer(hold_one_shot_double_tap_toggle_def* toggle_def) {
     toggle_def->current_alternate_main_layer_idx = (toggle_def->current_alternate_main_layer_idx + 1) % toggle_def->alternate_main_layers_count;
