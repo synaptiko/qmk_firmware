@@ -10,7 +10,7 @@
 // 5. generalize as much as possible to my "users" folder
 // 6. clean-up process_layer_event (hold_layer etc.) is not needed anymore
 // 6a. maybe I can get rid of hold_modifier as well (just call register/unregister_code directly from process_record_user)
-// 6b. split functionality for switching VTTYS
+// 6b. update functionality for switching VTTYS (especially for Ergodox)
 // 7. get rid of comments and implement some automatic "UI" generator (based on the code)
 // 8. wrap some global variables into functions which uses them (with static)
 
@@ -35,37 +35,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * |----------+----------+----------+----------+----------+----------|----------+----------+----------+----------+----------+----------|
      * |  LShift  |    zZ    |    xX    |    cC    |    vV    |    bB    |    nN    |    mM    |    ,<    |    .>    |    /?    |  RShift  |
      * |----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------|
-     * |  LCtrl   | Fn/VTTYS |    ⯅     |    ⯆     |   LAlt   |        Space        |  Extend  |    ⯇     |    ⯈     |   Misc   |    '"    |
+     * |  LCtrl   |  Extend  |    ⯅     |    ⯆     |   LAlt   |        Space        |   Prog   |    ⯇     |    ⯈     |   Misc   |    '"    |
      * `-----------------------------------------------------------------------------------------------------------------------------------'
      */
     [L_BASE] = LAYOUT_planck_mit(
         KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSPACE,
         KC_ESCAPE, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCOLON, KC_ENTER,
         KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT,
-        KC_LCTRL, MC_T_VTTYS, KC_UP, KC_DOWN, MC_T_ALT_NUM, KC_SPACE, MC_T_EXTEND, KC_LEFT, KC_RIGHT, MC_T_MISC, KC_QUOTE
+        KC_LCTRL, MC_T_EXTEND, KC_UP, KC_DOWN, KC_LALT, KC_SPACE, MC_T_PROG, KC_LEFT, KC_RIGHT, MC_T_MISC, KC_QUOTE
     ),
 
     /* .-----------------------------------------------------------------------------------------------------------------------------------.
      * |    `~    |    1!    |    2@    |    3#    |    4$    |    5%    |    6^    |    7&    |    8*    |    9(    |    0)    |          |
      * |----------+----------+----------+----------+----------+---------------------+----------+----------+----------+----------+----------|
-     * |          |          |          |          |          |          |          |          |          |          |          |          |
-     * |----------+----------+----------+----------+----------+----------|----------+----------+----------+----------+----------+----------|
-     * |          |          |          |          |          |          |          |          |          |          |          |          |
-     * |----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------|
-     * |          |          |          |          |          |                     |          |          |          |          |          |
-     * `-----------------------------------------------------------------------------------------------------------------------------------'
-     */
-    [L_ALT_NUM] = LAYOUT_planck_mit(
-        KC_GRAVE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
-    ),
-
-    /* .-----------------------------------------------------------------------------------------------------------------------------------.
-     * |    `~    |    1!    |    2@    |    3#    |    4$    |    5%    |    6^    |    7&    |    8*    |    9(    |    0)    |    -_    |
-     * |----------+----------+----------+----------+----------+---------------------+----------+----------+----------+----------+----------|
-     * |          |    &     |     [    |     {    |     (    |     <    |     >    |     )    |     }    |     ]    |          |    =+    |
+     * |          |    &     |     [    |     {    |     (    |     <    |     >    |     )    |     }    |     ]    |    -_    |    =+    |
      * |----------+----------+----------+----------+----------+----------|----------+----------+----------+----------+----------+----------|
      * |          |    |     |     ×    |          |LCtrl+PgUp|LCtrl+PgDn|          |     ™    |          |     …    |    \|    |          |
      * |----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------|
@@ -73,44 +56,44 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * `-----------------------------------------------------------------------------------------------------------------------------------'
      */
     [L_PROG] = LAYOUT_planck_mit(
-        KC_GRAVE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINUS,
-        KC_TRANSPARENT, KC_AMPR, KC_LBRACKET, KC_LCBR, KC_LPRN, KC_LABK, KC_RABK, KC_RPRN, KC_RCBR, KC_RBRACKET, KC_TRANSPARENT, KC_EQUAL,
+        KC_GRAVE, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_AMPR, KC_LBRACKET, KC_LCBR, KC_LPRN, KC_LABK, KC_RABK, KC_RPRN, KC_RCBR, KC_RBRACKET, KC_MINUS, KC_EQUAL,
         KC_TRANSPARENT, LSFT(KC_BSLASH), MC_CK_X_TIMES, KC_TRANSPARENT, LCTL(KC_PGUP), LCTL(KC_PGDOWN), KC_TRANSPARENT, MC_CK_TM, KC_TRANSPARENT, MC_CK_TRIPLE_DOT, KC_BSLASH, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_PGUP, KC_PGDOWN, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_HOME, KC_END, KC_TRANSPARENT, KC_TRANSPARENT
     ),
 
     /* .-----------------------------------------------------------------------------------------------------------------------------------.
-     * |          |          |    ěĚ    |    éÉ    |    řŘ    |    ťŤ    |    ýÝ    |    ůŮ    |    íÍ    |    óÓ    |          |    -_    |
+     * |          |          |    ěĚ    |    éÉ    |    řŘ    |    ťŤ    |    ýÝ    |    ůŮ    |    íÍ    |    óÓ    |          |          |
      * |----------+----------+----------+----------+----------+---------------------+----------+----------+----------+----------+----------|
      * |          |    áÁ    |    šŠ    |    ďĎ    |          |          |          |    úÚ    |          |          |          |          |
      * |----------+----------+----------+----------+----------+----------|----------+----------+----------+----------+----------+----------|
-     * |          |    žŽ    |          |    čČ    |          |          |    ňŇ    |          |          |     …    |          |          |
+     * |          |    žŽ    |          |    čČ    |          |          |    ňŇ    |          |          |          |          |          |
      * |----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------|
-     * |          |          |          |          |          |                     |          |   Home   |   End    |          |          |
+     * |          |          |          |          |          |                     |          |          |          |          |          |
      * `-----------------------------------------------------------------------------------------------------------------------------------'
      */
     [L_DIAC_CZ] = LAYOUT_planck_mit(
-        KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_CARON_E, MC_CK_ACUTE_E, MC_CK_CARON_R, MC_CK_CARON_T, MC_CK_ACUTE_Y, MC_CK_RING_ABOVE_U, MC_CK_ACUTE_I, MC_CK_ACUTE_O, KC_TRANSPARENT, KC_MINUS,
+        KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_CARON_E, MC_CK_ACUTE_E, MC_CK_CARON_R, MC_CK_CARON_T, MC_CK_ACUTE_Y, MC_CK_RING_ABOVE_U, MC_CK_ACUTE_I, MC_CK_ACUTE_O, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, MC_CK_ACUTE_A, MC_CK_CARON_S, MC_CK_CARON_D, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_U, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, MC_CK_CARON_Z, KC_TRANSPARENT, MC_CK_CARON_C, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_CARON_N, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_TRIPLE_DOT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_HOME, KC_END, KC_TRANSPARENT, KC_TRANSPARENT
+        KC_TRANSPARENT, MC_CK_CARON_Z, KC_TRANSPARENT, MC_CK_CARON_C, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_CARON_N, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
     ),
 
     /* .-----------------------------------------------------------------------------------------------------------------------------------.
-     * |          |          |          |    ęĘ    |          |          |          |          |          |    óÓ    |          |    -_    |
+     * |          |          |          |    ęĘ    |          |          |          |          |          |    óÓ    |          |          |
      * |----------+----------+----------+----------+----------+---------------------+----------+----------+----------+----------+----------|
      * |          |    ąĄ    |    śŚ    |          |          |          |          |          |          |    łŁ    |          |          |
      * |----------+----------+----------+----------+----------+----------|----------+----------+----------+----------+----------+----------|
-     * |          |    źŹ    |    żŻ    |    ćĆ    |          |          |    ńŃ    |          |          |     …    |          |          |
+     * |          |    źŹ    |    żŻ    |    ćĆ    |          |          |    ńŃ    |          |          |          |          |          |
      * |----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------|
-     * |          |          |          |          |          |                     |          |   Home   |   End    |          |          |
+     * |          |          |          |          |          |                     |          |          |          |          |          |
      * `-----------------------------------------------------------------------------------------------------------------------------------'
      */
     [L_DIAC_PL] = LAYOUT_planck_mit(
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_OGON_E, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_O, KC_TRANSPARENT, KC_MINUS,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_OGON_E, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_O, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, MC_CK_OGON_A, MC_CK_ACUTE_S, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_STROK_L, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, MC_CK_ACUTE_Z, MC_CK_DOT_Z, MC_CK_ACUTE_C, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_N, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_TRIPLE_DOT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_HOME, KC_END, KC_TRANSPARENT, KC_TRANSPARENT
+        KC_TRANSPARENT, MC_CK_ACUTE_Z, MC_CK_DOT_Z, MC_CK_ACUTE_C, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_N, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
     ),
 
     /* .-----------------------------------------------------------------------------------------------------------------------------------.
@@ -120,14 +103,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * |----------+----------+----------+----------+----------+----------|----------+----------+----------+----------+----------+----------|
      * |          |          |          |          |LCtrl+PgUp|LCtrl+PgDn|          |          |          |          |    MWD   |          |
      * |----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------|
-     * |          |          |          |          |          |      DiacLock       |          |          |          |          |          |
+     * |          | DiacLock |          |          |          |                     |          |          |          |          |          |
      * `-----------------------------------------------------------------------------------------------------------------------------------'
      */
     [L_MISC] = LAYOUT_planck_mit(
         RESET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_APPLICATION, KC_MS_BTN3, KC_MS_BTN1, KC_MS_BTN2, LALT(LSFT(KC_P)), KC_TRANSPARENT,
         KC_TRANSPARENT, RGB_TOG, RGB_VAI, RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_MS_WH_UP, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_PGUP), LCTL(KC_PGDOWN), KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_DIACRITICS_LOCK, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
+        KC_TRANSPARENT, MC_DIACRITICS_LOCK, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
     ),
 
     /* .-----------------------------------------------------------------------------------------------------------------------------------.
@@ -170,22 +153,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             break;
-        case MC_T_ALT_NUM:
-            process_layer_event(&T_ALT_NUM, record->event.pressed, false);
-            return false;
         case MC_T_EXTEND:
             process_layer_event(&T_EXTEND, record->event.pressed, false);
             return false;
         case MC_T_MISC:
             process_layer_event(&T_MISC, record->event.pressed, false);
             return false;
-        case MC_T_VTTYS:
-            if (is_left_shift_pressed) {
-                unregister_code(KC_LSHIFT);
-                process_layer_event(&T_VTTYS, record->event.pressed, false);
-            } else {
-                process_layer_event(&T_FKEYS, record->event.pressed, false);
-            }
+        case MC_T_PROG:
+            process_layer_event(&T_PROG, record->event.pressed, false);
             return false;
         case MC_DIACRITICS_LOCK:
             if (record->event.pressed) {
@@ -195,7 +170,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
             return false;
     }
-
 
     if (!process_compose_key(keycode, record, is_left_shift_pressed, is_shift_pressed)) {
         return false;
@@ -250,9 +224,7 @@ const uint8_t PROGMEM matrix_to_led_map[MATRIX_ROWS][MATRIX_COLS] = LAYOUT_planc
 
 uint16_t get_layer_keycode(uint8_t layer) {
     switch (layer) {
-        case L_ALT_NUM:
-            return MC_T_ALT_NUM;
-        case L_PROG:
+        case L_FKEYS:
             return MC_T_EXTEND;
         case L_DIAC_CZ:
             return MC_T_EXTEND;
@@ -260,8 +232,8 @@ uint16_t get_layer_keycode(uint8_t layer) {
             return MC_T_EXTEND;
         case L_MISC:
             return MC_T_MISC;
-        case L_FKEYS:
-            return MC_T_VTTYS;
+        case L_PROG:
+            return MC_T_PROG;
     }
 
     return 0;
@@ -270,27 +242,25 @@ uint16_t get_layer_keycode(uint8_t layer) {
 RGB layout_colors[] = {
     // L_BASE
     { .r = 58, .g = 151, .b = 182 },
-    // L_ALT_NUM
-    { .r = 58, .g = 151, .b = 182 },
     // L_PROG
-    { .r = 65, .g = 255, .b = 16 },
+    { .r = 0, .g = 255, .b = 0 },
+    // L_FKEYS
+    { .r = 0, .g = 255, .b = 0 },
     // L_DIAC_CZ
-    { .r = 255, .g = 255, .b = 255 },
+    { .r = 0, .g = 0, .b = 255 },
     // L_DIAC_PL
-    { .r = 233, .g = 143, .b = 38 },
+    { .r = 255, .g = 0, .b = 0 },
     // L_MISC
     { .r = 229, .g = 227, .b = 35 },
-    // L_FKEYS
-    { .r = 229, .g = 140, .b = 35 },
 };
 RGB no_color = { .r = 0, .g = 0, .b = 0 };
 RGB reset_color = { .r = 255, .g = 0, .b = 0 };
 
 RGB* get_layer_color(uint8_t layer) {
     switch (layer) {
-        case L_ALT_NUM:
-            return &(layout_colors[1]);
         case L_PROG:
+            return &(layout_colors[1]);
+        case L_FKEYS:
             return &(layout_colors[2]);
         case L_DIAC_CZ:
             return &(layout_colors[3]);
@@ -298,8 +268,6 @@ RGB* get_layer_color(uint8_t layer) {
             return &(layout_colors[4]);
         case L_MISC:
             return &(layout_colors[5]);
-        case L_FKEYS:
-            return &(layout_colors[6]);
         case L_BASE:
         default:
             return &(layout_colors[0]);
@@ -321,17 +289,14 @@ void rgb_matrix_indicators_user(void) {
 
                     if (led_i) {
                         switch (key) {
-                            case MC_T_ALT_NUM:
-                                led_color = get_layer_color(L_ALT_NUM);
-                                break;
                             case MC_T_EXTEND:
                                 led_color = get_layer_color(T_EXTEND.main_layer);
                                 break;
                             case MC_T_MISC:
                                 led_color = get_layer_color(L_MISC);
                                 break;
-                            case MC_T_VTTYS:
-                                led_color = get_layer_color(L_FKEYS);
+                            case MC_T_PROG:
+                                led_color = get_layer_color(L_PROG);
                                 break;
                         }
                         led_i = led_i - 1; // indexes of leds are 1-based so we can easily check it's presence
@@ -340,7 +305,6 @@ void rgb_matrix_indicators_user(void) {
                 }
             }
             break;
-        case L_ALT_NUM:
         case L_DIAC_CZ:
         case L_DIAC_PL:
         case L_PROG:

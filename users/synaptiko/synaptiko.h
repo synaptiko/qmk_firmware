@@ -21,7 +21,6 @@ char shift_letter(char letter, bool shift);
 // NOTE: specific numbers are used to avoid LEDs to be activated by planck/ez.c:layer_state_set_kb
 enum layers {
     L_BASE = 0, // base
-    L_ALT_NUM = 1, // numbers (useful for workspaces in sway/i3)
     L_DIAC_CZ = 7, // czech diacritics
     L_DIAC_PL = 8, // polish diacritics
     L_PROG = 9, // programming
@@ -30,11 +29,9 @@ enum layers {
 };
 
 extern hold_one_shot_double_tap_toggle_def T_BASE;
-extern hold_one_shot_double_tap_toggle_def T_ALT_NUM;
 extern hold_one_shot_double_tap_toggle_def T_EXTEND;
 extern hold_one_shot_double_tap_toggle_def T_MISC;
-extern hold_one_shot_double_tap_toggle_def T_VTTYS;
-extern hold_one_shot_double_tap_toggle_def T_FKEYS;
+extern hold_one_shot_double_tap_toggle_def T_PROG;
 
 enum DIACRITIC_CHARS {
     CK_ACUTE = '\'',
@@ -50,10 +47,9 @@ enum custom_keycodes {
 
     // layer+modifier toggles
     MC_T_BASE, // cancel one-shot & go to base layer
-    MC_T_ALT_NUM, // first row turns into numbers
-    MC_T_EXTEND, // it's L_PROG, L_DIAC_CZ or L_DIAC_PL based on MC_DIACRITICS_LOCK
+    MC_T_EXTEND, // it's L_FKEYS, L_DIAC_CZ or L_DIAC_PL based on MC_DIACRITICS_LOCK
     MC_T_MISC, // go to misc layer
-    MC_T_VTTYS, // special combo for easier switching between virtual consoles
+    MC_T_PROG, // numbers and useful keys for programming
 
     // diacritics switching macros
     MC_DIACRITICS_LOCK,
