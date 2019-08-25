@@ -13,6 +13,7 @@
 // 6b. update functionality for switching VTTYS (especially for Ergodox)
 // 7. get rid of comments and implement some automatic "UI" generator (based on the code)
 // 8. wrap some global variables into functions which uses them (with static)
+// 9. check this: https://github.com/qmk/qmk_firmware/issues/6118#issuecomment-500889522
 
 void update_leds_for_lang(bool is_active);
 
@@ -179,20 +180,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void update_leds_for_lang(bool is_active) {
-    palClearPad(GPIOB, 8);
-    palClearPad(GPIOB, 9);
+    // TODO jprokop: make this configurable later; LED_LEVEL from Planck EZ doesn't work without Oryx configurator
+    planck_ez_left_led_level(32);
+    planck_ez_right_led_level(32);
+    planck_ez_left_led_off();
+    planck_ez_right_led_off();
 
     if (is_active) {
         switch (T_EXTEND.main_layer) {
             case L_DIAC_CZ:
-                palSetPad(GPIOB, 9);
+                planck_ez_left_led_on();
                 break;
             case L_DIAC_PL:
-                palSetPad(GPIOB, 8);
+                planck_ez_right_led_on();
                 break;
             default:
-                palSetPad(GPIOB, 8);
-                palSetPad(GPIOB, 9);
+                planck_ez_left_led_on();
+                planck_ez_right_led_on();
                 break;
         }
     }
