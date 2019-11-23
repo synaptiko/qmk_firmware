@@ -22,3 +22,6 @@ KEYLOGGER_ENABLE = no
 SLEEP_LED_ENABLE = no
 SWAP_HANDS_ENABLE = no
 TAP_DANCE_ENABLE = no
+
+# Following is needed so sprintf can be used properly
+TMK_COMMON_SRC += $(CHIBIOS)/os/various/syscalls.c
