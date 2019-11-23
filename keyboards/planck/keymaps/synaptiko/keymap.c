@@ -4,7 +4,7 @@
 
 // TODO jprokop todo-list:
 // 1. solve setting and saving of brightness of LED in planck
-// 2. solve dynamic macros
+// 2. solve dynamic macros (it will require more work because I cannot have a dedicated key for it)
 // 3. improve RGB handling below (see the todo below)
 // 4. unify/refactor Ergodox keymaps, so it's similar to planck
 // 5. generalize as much as possible to my "users" folder
@@ -16,17 +16,6 @@
 // 9. check this: https://github.com/qmk/qmk_firmware/issues/6118#issuecomment-500889522
 
 void update_leds_for_lang(bool is_active);
-
-// TODO jprokop: add dynamic macro support for planck later (it will require more work because I cannot have a dedicated key for it)
-/* enum { */
-  // SAFE_RANGE must be used to tag the first element of the enum.
-  // DYNAMIC_MACRO_RANGE must always be the last element of the enum if other
-  // values are added (as its value is used to create a couple of other keycodes
-  // after it).
-  /* DYNAMIC_MACRO_RANGE = SAFE_RANGE, */
-/* }; */
-// This file must be included after DYNAMIC_MACRO_RANGE is defined...
-/* #include "dynamic_macro.h" */
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* .-----------------------------------------------------------------------------------------------------------------------------------.
