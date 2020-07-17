@@ -1,11 +1,14 @@
 # Set any rules.mk overrides for your specific keymap here.
 # See rules at https://docs.qmk.fm/#/config_options?id=the-rulesmk-file
+LINK_TIME_OPTIMIZATION_ENABLE = yes
 EXTRAKEY_ENABLE = yes
 MOUSEKEY_ENABLE = yes
 NKRO_ENABLE = yes
 QMK_KEYS_PER_SCAN = yes
+
 RGBLIGHT_ANIMATION = yes
 RGBLIGHT_ENABLE = yes
+
 DYNAMIC_MACRO_ENABLE = yes
 
 UNICODE_ENABLE = no

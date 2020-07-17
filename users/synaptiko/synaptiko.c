@@ -5,11 +5,11 @@
 // NOTE: keep in sync with header file!
 hold_one_shot_double_tap_toggle_def T_BASE = { .main_layer = L_BASE };
 hold_one_shot_double_tap_toggle_def T_PROG = { .main_layer = L_PROG };
-uint8_t alternate_main_layers_for_T_EXTEND[] = { L_FKEYS, L_DIAC_CZ, L_DIAC_PL };
+uint8_t alternate_main_layers_for_T_EXTEND[] = { L_FKEYS, L_DIAC_CZ };
 hold_one_shot_double_tap_toggle_def T_EXTEND = {
     .main_layer = L_FKEYS,
     .alternate_main_layers = alternate_main_layers_for_T_EXTEND,
-    .alternate_main_layers_count = 3,
+    .alternate_main_layers_count = 2,
     .current_alternate_main_layer_idx = 0,
     .hold_modifiers = MOD_LALT | MOD_LCTL
 };
@@ -209,63 +209,6 @@ bool process_compose_key(uint16_t keycode, keyrecord_t *record, bool is_left_shi
             case MC_CK_RING_ABOVE_U:
                 if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
                 type_compose_key_combo(CK_RING_ABOVE, shift_letter('U', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_OGON_E:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_OGON, shift_letter('E', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_OGON_A:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_OGON, shift_letter('A', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_ACUTE_S:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_ACUTE, shift_letter('S', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_STROK_L:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_STROK, shift_letter('L', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_ACUTE_Z:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_ACUTE, shift_letter('Z', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_ACUTE_C:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_ACUTE, shift_letter('C', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_ACUTE_N:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_ACUTE, shift_letter('N', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_DOT_Z:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo(CK_DOT, shift_letter('Z', is_shift_pressed));
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-
-            // other useful compose key combos
-            case MC_CK_X_TIMES:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo('x', 'x');
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_TRIPLE_DOT:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo('.', '.');
-                if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                return false;
-            case MC_CK_TM:
-                if (is_shift_pressed) unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
-                type_compose_key_combo('t', 'm');
                 if (is_shift_pressed) register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT);
                 return false;
         }

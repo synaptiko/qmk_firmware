@@ -18,14 +18,12 @@ bool process_compose_key(uint16_t keycode, keyrecord_t *record, bool is_left_shi
 void type_compose_key_combo(char first_char, char second_char);
 char shift_letter(char letter, bool shift);
 
-// NOTE: specific numbers are used to avoid LEDs to be activated by planck/ez.c:layer_state_set_kb
 enum layers {
-    L_BASE = 0, // base
-    L_DIAC_CZ = 7, // czech diacritics
-    L_DIAC_PL = 8, // polish diacritics
-    L_PROG = 9, // programming
-    L_MISC = 10,  // miscellaneous functions
-    L_FKEYS = 11, // F1-12
+    L_BASE = 0,    // base
+    L_DIAC_CZ = 1, // czech diacritics
+    L_PROG = 2,    // programming
+    L_MISC = 3,    // miscellaneous functions
+    L_FKEYS = 4,   // F1-12
 };
 
 extern hold_one_shot_double_tap_toggle_def T_BASE;
@@ -36,10 +34,7 @@ extern hold_one_shot_double_tap_toggle_def T_PROG;
 enum DIACRITIC_CHARS {
     CK_ACUTE = '\'',
     CK_CARON = '<',
-    CK_RING_ABOVE = '*',
-    CK_OGON = ',',
-    CK_STROK = '/',
-    CK_DOT = '.'
+    CK_RING_ABOVE = '*'
 };
 
 enum custom_keycodes {
@@ -47,7 +42,7 @@ enum custom_keycodes {
 
     // layer+modifier toggles
     MC_T_BASE, // cancel one-shot & go to base layer
-    MC_T_EXTEND, // it's L_FKEYS, L_DIAC_CZ or L_DIAC_PL based on MC_DIACRITICS_LOCK
+    MC_T_EXTEND, // it's L_FKEYS, L_DIAC_CZ based on MC_DIACRITICS_LOCK
     MC_T_MISC, // go to misc layer
     MC_T_PROG, // numbers and useful keys for programming
 
@@ -58,13 +53,6 @@ enum custom_keycodes {
     MC_CK_ACUTE_A, MC_CK_ACUTE_E, MC_CK_ACUTE_I, MC_CK_ACUTE_O, MC_CK_ACUTE_Y, MC_CK_ACUTE_U,
     MC_CK_CARON_E, MC_CK_CARON_Z, MC_CK_CARON_C, MC_CK_CARON_S, MC_CK_CARON_R, MC_CK_CARON_T, MC_CK_CARON_D, MC_CK_CARON_N,
     MC_CK_RING_ABOVE_U,
-
-    // macros for typing polish diacritics with compose key on linux (AltGr)
-    MC_CK_OGON_A, MC_CK_ACUTE_C, MC_CK_OGON_E, MC_CK_STROK_L, MC_CK_ACUTE_N, /*MC_CK_ACUTE_O,*/
-    MC_CK_ACUTE_S, MC_CK_ACUTE_Z, MC_CK_DOT_Z,
-
-    // useful compose key combos
-    MC_CK_X_TIMES, MC_CK_TRIPLE_DOT, MC_CK_TM,
 
     // RGB brightness
     MC_RGB_VAI, MC_RGB_VAD, MC_RGB_TOG,

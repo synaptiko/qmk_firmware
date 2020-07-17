@@ -1,6 +1,14 @@
 #include QMK_KEYBOARD_H
 #include "synaptiko.h"
 
+// TODO jprokop todo-list:
+// 1. clean-up process_layer_event (hold_layer etc.) is not needed anymore
+// 1a. maybe I can get rid of hold_modifier as well (just call register/unregister_code directly from process_record_user)
+// 1b. update functionality for switching VTTYS (especially for Ergodox)
+// 2. get rid of comments and implement some automatic "UI" generator (based on the code)
+// 3. wrap some global variables into functions which uses them (with static)
+// 4. check this: https://github.com/qmk/qmk_firmware/issues/6118#issuecomment-500889522
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* .----------------------------------------------. .----------------------------------------------.
      * |   `~   |  1! |  2@ |  3# |  4$ |  5% |       | |       |  6^ |  7& |  8* |  9( |  0) |   -_   |
@@ -11,14 +19,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * |--------+-----+-----+-----+-----+-----| Bottom| |       |-----+-----+-----+-----+-----+--------|
      * | LShift |  zZ |  xX |  cC |  vV |  bB |Monitor| |       |  nN |  mM |  ,< |  .> |  /? | RShift |
      * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-     * \  LCtrl|      |  ⯅  |  ⯆  | LAlt|                             | Prog|  ⯇  |  ⯈  | Misc|   '"   /
+     * \  LCtrl|      |  ⯅  |  ⯆  | LAlt|                             | Prog|  ⯇  |  ⯈  |     |   '"   /
      *  `-------------------------------'                             '-------------------------------'
      *                               .---------------.   .---------------.
-     *                               |DiacLock| Enter|   |  PM1  |  RMS  |
+     *                               |  Misc  | Enter|   |  PM1  |  RMS  |
      *                       .-------+-------+-------|   |-------+-------+-------.
      *                       |       |       |       |   |  PM2  |       |       |
      *                       | Space |Extend |-------|   |-------| Enter |⌫  /Del|
-     *                       |       |       |  Misc |   | AltGr |       |       |
+     *                       |       |       |DiacLck|   | AltGr |       |       |
      *                       '-----------------------'   '-----------------------'
      */
     [L_BASE] = LAYOUT_ergodox(
@@ -28,15 +36,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESCAPE, KC_A, KC_S, KC_D, KC_F, KC_G,
         KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, LCTL(LALT(KC_B)),
         KC_LCTRL, KC_TRANSPARENT, KC_UP, KC_DOWN, KC_LALT,
-        MC_DIACRITICS_LOCK, KC_ENTER, KC_TRANSPARENT,
-        KC_SPACE, MC_T_EXTEND, MC_T_MISC,
+        MC_T_MISC, KC_ENTER, KC_TRANSPARENT,
+        KC_SPACE, MC_T_EXTEND, MC_DIACRITICS_LOCK,
 
         // right hand
         KC_TRANSPARENT, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINUS,
         KC_TRANSPARENT, KC_Y, KC_U, KC_I, KC_O, KC_P, LSFT(KC_EQUAL),
         KC_H, KC_J, KC_K, KC_L, KC_SCOLON, KC_EQUAL,
         KC_TRANSPARENT, KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT,
-        TT(L_PROG), KC_LEFT, KC_RIGHT, MC_T_MISC, KC_QUOTE,
+        MO(L_PROG), KC_LEFT, KC_RIGHT, KC_TRANSPARENT, KC_QUOTE,
         DYN_MACRO_PLAY1, DYN_REC_STOP, DYN_MACRO_PLAY2,
         KC_RALT, KC_ENTER, KC_BSPACE
     ),
@@ -120,52 +128,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     /* .----------------------------------------------. .----------------------------------------------.
-     * |        |     |     |     |     |     |       | |       |     |     |     |     |     |        |
-     * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-     * |        |     |     |  ęĘ |     |     |       | |       |     |     |     |  óÓ |     |        |
-     * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
-     * |        |  ąĄ |  śŚ |     |     |     |-------| |-------|     |     |     |  łŁ |     |        |
-     * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
-     * |        |  źŹ |  żŻ |  ćĆ |     |     |       | |       |  ńŃ |     |     |     |     |        |
-     * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-     * \        |     |     |     |     |                             |     |     |     |     |        /
-     *  `-------------------------------'                             '-------------------------------'
-     *                               .---------------.   .---------------.
-     *                               |       |       |   |       |       |
-     *                       .-------+-------+-------|   |-------+-------+-------.
-     *                       |       |       |       |   |       |       |       |
-     *                       |       |       |-------|   |-------|       |       |
-     *                       |       |       |       |   |       |       |       |
-     *                       '-----------------------'   '-----------------------'
-     */
-    [L_DIAC_PL] = LAYOUT_ergodox(
-        // left hand
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_OGON_E, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, MC_CK_OGON_A, MC_CK_ACUTE_S, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, MC_CK_ACUTE_Z, MC_CK_DOT_Z, MC_CK_ACUTE_C, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-
-        // right hand
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_ACUTE_O, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MC_CK_STROK_L, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, MC_CK_ACUTE_N, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
-    ),
-
-    /* .----------------------------------------------. .----------------------------------------------.
      * |  Reset | RM1 | RM2 |     |     |     |       | | RGBTg |     |     |     |     |     |        |
      * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-     * |        | MWU |     |     |     |     |       | | Bri+  | Menu| MCM | MCL | MCR |Pause|        |
+     * |        | MWU | MWL | MWR |     |     |       | | Bri+  | Menu| MCM | MCL | MCR |Pause|        |
      * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
      * |        | MWD | MCL | MCR | MCM |Enter|-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |        |
      * |--------+-----+-----+-----+-----+-----|       | | Bri-  |-----+-----+-----+-----+-----+--------|
-     * |        |     |CtrlX|CtrlC|CtrlV|     |       | |       |     |     |     |     | MWD |        |
+     * |        |     |CtrlX|CtrlC|CtrlV|⌫  /D|       | |       |     |     |     |     | MWD |        |
      * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
      * \        |     |     |     |     |                             |     |     |     |     |        /
      *  `-------------------------------'                             '-------------------------------'
@@ -180,9 +149,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [L_MISC] = LAYOUT_ergodox(
         // left hand
         RESET, DYN_REC_START1, DYN_REC_START2, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_MS_WH_UP, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_MS_WH_UP, KC_MS_WH_LEFT, KC_MS_WH_RIGHT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_MS_WH_DOWN, KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3, KC_ENTER,
-        KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_BSPACE, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
@@ -394,10 +363,6 @@ uint32_t layer_state_set_rgb(uint32_t state) {
             rgblight_sethsv_noeeprom(131, 102, rgblight_val);
             rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
             break;
-        case L_DIAC_PL:
-            rgblight_sethsv_noeeprom(106, 255, rgblight_val);
-            rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
-            break;
         case L_MISC:
             rgblight_sethsv_noeeprom(36, 255, rgblight_val);
             rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
@@ -424,9 +389,6 @@ void update_leds_for_lang(void) {
     switch (T_EXTEND.main_layer) {
         case L_DIAC_CZ:
             ergodox_right_led_3_on();
-            break;
-        case L_DIAC_PL:
-            ergodox_right_led_2_on();
             break;
     }
 }
