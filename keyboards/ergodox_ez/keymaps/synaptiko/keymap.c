@@ -36,7 +36,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRANSPARENT, KC_Y, KC_U, KC_I, KC_O, KC_P, LSFT(KC_EQUAL),
         KC_H, KC_J, KC_K, KC_L, KC_SCOLON, KC_EQUAL,
         KC_TRANSPARENT, KC_N, KC_M, KC_COMMA, KC_DOT, KC_SLASH, KC_RSHIFT,
-        MC_T_PROG, KC_LEFT, KC_RIGHT, MC_T_MISC, KC_QUOTE,
+        TT(L_PROG), KC_LEFT, KC_RIGHT, MC_T_MISC, KC_QUOTE,
         DYN_MACRO_PLAY1, DYN_REC_STOP, DYN_MACRO_PLAY2,
         KC_RALT, KC_ENTER, KC_BSPACE
     ),
@@ -159,15 +159,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     /* .----------------------------------------------. .----------------------------------------------.
-     * |  Reset | RM1 | RM2 |     |     |     |       | |       |     |     |     |     |     |        |
+     * |  Reset | RM1 | RM2 |     |     |     |       | | RGBTg |     |     |     |     |     |        |
      * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-     * |        |     |     |     |     |     |       | |       | Menu| MCM | MCL | MCR |Pause|        |
+     * |        | MWU |     |     |     |     |       | | Bri+  | Menu| MCM | MCL | MCR |Pause|        |
      * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
-     * |        |RGBTg| Bri+| Bri-|     |     |-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |        |
-     * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
-     * |        |     |     |     |LC+PU|LC+PD|       | |       |     |     |     |     | MWD |        |
+     * |        | MWD | MCL | MCR | MCM |Enter|-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |        |
+     * |--------+-----+-----+-----+-----+-----|       | | Bri-  |-----+-----+-----+-----+-----+--------|
+     * |        |     |CtrlX|CtrlC|CtrlV|     |       | |       |     |     |     |     | MWD |        |
      * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
-     * \        |DiacL|     |     |     |                             |     |     |     |     |        /
+     * \        |     |     |     |     |                             |     |     |     |     |        /
      *  `-------------------------------'                             '-------------------------------'
      *                               .---------------.   .---------------.
      *                               |       |       |   |       |       |
@@ -180,18 +180,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [L_MISC] = LAYOUT_ergodox(
         // left hand
         RESET, DYN_REC_START1, DYN_REC_START2, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, MC_RGB_TOG, MC_RGB_VAI, MC_RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_PGUP), LCTL(KC_PGDOWN), KC_TRANSPARENT,
-        KC_TRANSPARENT, MC_DIACRITICS_LOCK, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_MS_WH_UP, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_MS_WH_DOWN, KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3, KC_ENTER,
+        KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
 
         // right hand
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_APPLICATION, KC_MS_BTN3, KC_MS_BTN1, KC_MS_BTN2, LALT(LSFT(KC_P)), KC_TRANSPARENT,
+        MC_RGB_TOG, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        MC_RGB_VAI, KC_APPLICATION, KC_MS_BTN3, KC_MS_BTN1, KC_MS_BTN2, LALT(LSFT(KC_P)), KC_TRANSPARENT,
         KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_MS_WH_UP, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_TRANSPARENT,
+        MC_RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
@@ -288,9 +288,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case MC_T_MISC:
             process_layer_event(&T_MISC, record->event.pressed, false);
-            return false;
-        case MC_T_PROG:
-            process_layer_event(&T_PROG, record->event.pressed, false);
             return false;
         case MC_DIACRITICS_LOCK:
             if (record->event.pressed) {

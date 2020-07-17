@@ -6,5 +6,5 @@
  */
 #define RGBLIGHT_SLEEP
 
-#undef DEBOUNCE
-#define DEBOUNCE 15
+#undef TAPPING_TOGGLE
+#define TAPPING_TOGGLE 2
