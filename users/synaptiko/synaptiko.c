@@ -7,16 +7,13 @@
 #define CK_CARON "<"
 #define CK_RING_ABOVE "*"
 
-/* it's de-facto this: SEND_STRING(SS_RALT(key_combo)); */
-/* the problem is that SEND_STRING macro can use only static strings */
-/* \2\xe6{string}\3\xe6 is equivalent of SS_RALT(string) */
 #define compose_key(leader, letterLower, letterUpper) \
 if (is_shift_pressed) { \
     unregister_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT); \
-    send_string("\2\xe6" leader letterUpper "\3\xe6"); \
+    SEND_STRING(SS_RALT(leader letterUpper)); \
     register_code(is_left_shift_pressed ? KC_LSHIFT : KC_RSHIFT); \
 } else { \
-    send_string("\2\xe6" leader letterLower "\3\xe6"); \
+    SEND_STRING(SS_RALT(leader letterLower)); \
 } \
 clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED)
 

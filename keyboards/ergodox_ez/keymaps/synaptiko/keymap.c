@@ -1,7 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "synaptiko.h"
 
-// 1. get rid of comments and implement some automatic "UI" generator (based on the code)
+// TODO jprokop: get rid of comments and implement some automatic "UI" generator (based on the code)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* .----------------------------------------------. .----------------------------------------------.
@@ -239,8 +239,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
 };
-
-const uint16_t PROGMEM fn_actions[] = {};
 
 uint16_t idle_timer = 0;
 uint8_t halfmin_counter = 0;
