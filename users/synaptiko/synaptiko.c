@@ -26,12 +26,14 @@ bool process_compose_key(uint16_t keycode, keyrecord_t *record, bool is_left_shi
     if (record->event.pressed) {
         // diacritics macros
         switch (keycode) {
+            // áÁ éÉ íÍ óÓ ýÝ úÚ
             compose_key_case (MC_CK_ACUTE_A, CK_ACUTE, "a", "A");
             compose_key_case (MC_CK_ACUTE_E, CK_ACUTE, "e", "E");
             compose_key_case (MC_CK_ACUTE_I, CK_ACUTE, "i", "I");
             compose_key_case (MC_CK_ACUTE_O, CK_ACUTE, "o", "O");
             compose_key_case (MC_CK_ACUTE_Y, CK_ACUTE, "y", "Y");
             compose_key_case (MC_CK_ACUTE_U, CK_ACUTE, "u", "U");
+            // ěĚ žŽ čČ šŠ řŘ ťŤ ďĎ ňŇ
             compose_key_case (MC_CK_CARON_E, CK_CARON, "e", "E");
             compose_key_case (MC_CK_CARON_Z, CK_CARON, "z", "Z");
             compose_key_case (MC_CK_CARON_C, CK_CARON, "c", "C");
@@ -40,6 +42,7 @@ bool process_compose_key(uint16_t keycode, keyrecord_t *record, bool is_left_shi
             compose_key_case (MC_CK_CARON_T, CK_CARON, "t", "T");
             compose_key_case (MC_CK_CARON_D, CK_CARON, "d", "D");
             compose_key_case (MC_CK_CARON_N, CK_CARON, "n", "N");
+            // ůŮ
             compose_key_case (MC_CK_RING_ABOVE_U, CK_RING_ABOVE, "u", "U");
         }
     }

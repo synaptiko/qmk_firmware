@@ -172,7 +172,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * \        |     |     |     |     |                             |     |     |     |     |        /
      *  `-------------------------------'                             '-------------------------------'
      *                               .---------------.   .---------------.
-     *                               |       |       |   |       |       |
+     *                               | MPort |       |   |       |       |
      *                       .-------+-------+-------|   |-------+-------+-------.
      *                       |       |       | FKeys |   |       |       |       |
      *                       |       | Base  |-------|   |-------|       |       |
@@ -186,7 +186,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRANSPARENT, KC_MS_WH_DOWN, KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3, KC_ENTER,
         KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_BSPACE, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, OSL(L_FKEYS),
+        MC_MPORT_ACTIVATE, KC_TRANSPARENT, OSL(L_FKEYS),
         KC_TRANSPARENT, TO(L_BASE), LM(L_FKEYS, MOD_LCTL | MOD_LALT),
 
         // right hand
@@ -194,6 +194,45 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         MC_RGB_VAI, KC_APPLICATION, KC_MS_BTN3, KC_MS_BTN1, KC_MS_BTN2, LALT(LSFT(KC_P)), KC_TRANSPARENT,
         KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_MS_WH_UP, KC_TRANSPARENT,
         MC_RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
+    ),
+
+    /* .----------------------------------------------. .----------------------------------------------.
+     * |        |     |     |     |     |     |       | |       |     |     |     |     |     |        |
+     * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
+     * |        |  qQ |  wW |  eE |  rR |  tT |       | |       |     |     |     |     |     |        |
+     * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
+     * |  Base  |  aA |  sS |  dD |  fF |  gG |-------| |-------|     |     |     |     |     |        |
+     * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
+     * |        |  zZ |  xX |  cC |  vV |  bB |       | |       |     |     |     |     |     |        |
+     * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
+     * \        |     |     |     |     |                             |     |     |     |     |        /
+     *  `-------------------------------'                             '-------------------------------'
+     *                               .---------------.   .---------------.
+     *                               |  Misc |       |   |       |       |
+     *                       .-------+-------+-------|   |-------+-------+-------.
+     *                       |       |       |       |   |       |       |       |
+     *                       |       |  Base |-------|   |-------|       |       |
+     *                       |       |       |       |   |       |       |       |
+     *                       '-----------------------'   '-----------------------'
+     */
+    [L_MPORT] = LAYOUT_ergodox(
+        // left hand
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_TRANSPARENT,
+        MC_MPORT_DEACTIVATE_TO_BASE, KC_A, KC_S, KC_D, KC_F, KC_G,
+        KC_TRANSPARENT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        MC_MPORT_DEACTIVATE, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, MC_MPORT_DEACTIVATE_TO_BASE, KC_TRANSPARENT,
+
+        // right hand
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
@@ -301,6 +340,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             case KC_F12:
                 layer_off(L_MISC);
                 return true;
+            // L_MPORT keys
+            case MC_MPORT_ACTIVATE:
+                layer_on(L_MPORT);
+                SEND_STRING(SS_LALT(SS_LCTL(SS_LSFT("M"))));
+                return false;
+            case MC_MPORT_DEACTIVATE:
+                layer_off(L_MPORT);
+                SEND_STRING(SS_TAP(X_ESCAPE));
+                return false;
+            case MC_MPORT_DEACTIVATE_TO_BASE:
+                layer_off(L_MPORT);
+                layer_off(L_MISC);
+                layer_on(L_BASE);
+                SEND_STRING(SS_TAP(X_ESCAPE));
+                return false;
             // RGB brightness
             case MC_RGB_VAI:
                 if (record->event.pressed) {
@@ -407,8 +461,12 @@ uint32_t layer_state_set_user(uint32_t state) {
             ergodox_right_led_3_on();
             break;
         case L_MISC:
+        case L_MPORT:
             rgblight_sethsv_noeeprom(36, 255, rgblight_val);
             rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+            if (layer == L_MPORT) {
+                ergodox_right_led_1_on();
+            }
             ergodox_right_led_2_on();
             ergodox_right_led_3_off();
             break;
