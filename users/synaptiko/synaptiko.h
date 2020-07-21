@@ -12,9 +12,9 @@ enum layers {
     L_BASE_DIAC = 1, // base adjusted with diacritics switch
     L_PROG = 2,      // programming
     L_DIAC_CZ = 3,   // czech diacritics
-    L_FKEYS = 4,     // F1-12
-    L_MISC = 5,      // miscellaneous functions (and mouse-related keys)
-    L_MPORT = 6,     // Mouse Teleport (bound to sway's mode)
+    L_MISC = 4,      // miscellaneous functions (and mouse-related keys)
+    L_MPORT = 5,     // Mouse Teleport (bound to sway's mode)
+    L_FKEYS = 6,     // F1-12
 };
 
 enum custom_keycodes {

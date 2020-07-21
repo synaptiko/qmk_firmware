@@ -16,11 +16,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * \  LCtrl|      |  ⯅  |  ⯆  | LAlt|                             | Prog|  ⯇  |  ⯈  |     |   '"   /
      *  `-------------------------------'                             '-------------------------------'
      *                               .---------------.   .---------------.
-     *                               |        | Enter|   |  PM1  |  RMS  |
+     *                               |BaseDiac| Enter|   |  PM1  |  RMS  |
      *                       .-------+-------+-------|   |-------+-------+-------.
      *                       |       |       |       |   |  PM2  |       |       |
      *                       | Space | Misc  |-------|   |-------| Enter |⌫  /Del|
-     *                       |       |      |BaseDiac|   | AltGr |       |       |
+     *                       |       |       |       |   | AltGr |       |       |
      *                       '-----------------------'   '-----------------------'
      */
     [L_BASE] = LAYOUT_ergodox(
@@ -30,8 +30,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESCAPE, KC_A, KC_S, KC_D, KC_F, KC_G,
         KC_LSHIFT, KC_Z, KC_X, KC_C, KC_V, KC_B, LCTL(LALT(KC_B)),
         KC_LCTRL, KC_TRANSPARENT, KC_UP, KC_DOWN, KC_LALT,
-        KC_TRANSPARENT, KC_ENTER, KC_TRANSPARENT,
-        KC_SPACE, TO(L_MISC), TO(L_BASE_DIAC),
+        TO(L_BASE_DIAC), KC_ENTER, KC_TRANSPARENT,
+        KC_SPACE, TO(L_MISC), KC_TRANSPARENT,
 
         // right hand
         KC_TRANSPARENT, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINUS,
@@ -55,11 +55,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * \        |     |     |     |     |                             |     |     |     |     |        /
      *  `-------------------------------'                             '-------------------------------'
      *                               .---------------.   .---------------.
-     *                               |       |       |   |       |       |
+     *                               |  Base |       |   |       |       |
      *                       .-------+-------+-------|   |-------+-------+-------.
      *                       |       |       |       |   |       |       |       |
      *                       |       | DiacCZ|-------|   |-------|       |       |
-     *                       |       |       | Base  |   |       |       |       |
+     *                       |       |       |       |   |       |       |       |
      *                       '-----------------------'   '-----------------------'
      */
     [L_BASE_DIAC] = LAYOUT_ergodox(
@@ -69,8 +69,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, OSL(L_DIAC_CZ), TO(L_BASE),
+        TO(L_BASE), KC_TRANSPARENT, KC_TRANSPARENT,
+        KC_TRANSPARENT, OSL(L_DIAC_CZ), KC_TRANSPARENT,
 
         // right hand
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
