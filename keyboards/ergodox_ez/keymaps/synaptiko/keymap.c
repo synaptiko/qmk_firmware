@@ -161,9 +161,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     /* .----------------------------------------------. .----------------------------------------------.
-     * |  Reset | RM1 | RM2 |     |     |     |       | | RGBTg |     |     |     |     |     |        |
+     * |  Reset |  6^ |  7& |  8* |  9( |  0) |       | | RGBTg |     |     |     |     |     |        |
      * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-     * |        | MWU | MWL | MWR |     |     |       | | Bri+  | Menu| MCM | MCL | MCR |Pause|        |
+     * |        | MWU | MWL | MWR | PM1 | PM2 |       | | Bri+  | Menu| MCM | MCL | MCR |Pause|        |
      * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
      * |        | MWD | MCL | MCR | MCM |Enter|-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |        |
      * |--------+-----+-----+-----+-----+-----|       | | Bri-  |-----+-----+-----+-----+-----+--------|
@@ -172,17 +172,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * \        |     |     |     |     |                             |     |     |     |     |        /
      *  `-------------------------------'                             '-------------------------------'
      *                               .---------------.   .---------------.
-     *                               | MPort |       |   |       |       |
+     *                               | MPort |       |   |  RM1  |       |
      *                       .-------+-------+-------|   |-------+-------+-------.
-     *                       |       |       | FKeys |   |       |       |       |
+     *                       |       |       | FKeys |   |  RM2  |       |       |
      *                       |       | Base  |-------|   |-------|       |       |
      *                       |       |      |FKeysMod|   |       |       |       |
      *                       '-----------------------'   '-----------------------'
      */
     [L_MISC] = LAYOUT_ergodox(
         // left hand
-        RESET, DYN_REC_START1, DYN_REC_START2, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_MS_WH_UP, KC_MS_WH_LEFT, KC_MS_WH_RIGHT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        RESET, KC_6, KC_7, KC_8, KC_9, KC_0, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_MS_WH_UP, KC_MS_WH_LEFT, KC_MS_WH_RIGHT, DYN_MACRO_PLAY1, DYN_MACRO_PLAY2, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_MS_WH_DOWN, KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3, KC_ENTER,
         KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_BSPACE, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
@@ -195,9 +195,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_MS_LEFT, KC_MS_DOWN, KC_MS_UP, KC_MS_RIGHT, KC_MS_WH_UP, KC_TRANSPARENT,
         MC_RGB_VAD, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_WH_DOWN, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+        DYN_REC_START1, KC_TRANSPARENT, DYN_REC_START2,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT
     ),
+
 
     /* .----------------------------------------------. .----------------------------------------------.
      * |        |     |     |     |     |     |       | |       |     |     |     |     |     |        |
@@ -397,6 +398,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     // we have to clear layer state manually (similar to mute)
                     clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
                 }
+                return false;
+            case DYN_MACRO_PLAY1:
+            case DYN_MACRO_PLAY2:
+                layer_off(L_MISC);
                 return false;
         }
     }
