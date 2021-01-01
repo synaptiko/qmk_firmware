@@ -161,11 +161,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     /* .----------------------------------------------. .----------------------------------------------.
-     * |  Reset |  6^ |  7& |  8* |  9( |  0) |       | | RGBTg |     |     |     |     |     |        |
+     * |  Reset |  6^ |  7& |  8* |  9( |  0) | Enter | | RGBTg |     |     |     |     |     |        |
      * |--------+-----+-----+-----+-----+-------------| |-------+-----+-----+-----+-----+-----+--------|
-     * |        | MWU | MWL | MWR | PM1 | PM2 |       | | Bri+  | Menu| MCM | MCL | MCR |Pause|        |
+     * |        | MWL | MWR |     | PM1 | PM2 |       | | Bri+  | Menu| MCM | MCL | MCR |Pause|        |
      * |--------+-----+-----+-----+-----+-----|       | |       |-----+-----+-----+-----+-----+--------|
-     * |        | MWD | MCL | MCR | MCM |Enter|-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |        |
+     * |        | MWD | MWU | MCL | MCM | MCR |-------| |-------| M⯇  | M⯆  | M⯅  | M⯈  | MWU |        |
      * |--------+-----+-----+-----+-----+-----|       | | Bri-  |-----+-----+-----+-----+-----+--------|
      * |        |     |CtrlX|CtrlC|CtrlV|⌫  /D|       | |       |     |     |     |     | MWD |        |
      * '--------+-----+-----+-----+-----+-------------' '-------------+-----+-----+-----+-----+--------'
@@ -181,9 +181,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      */
     [L_MISC] = LAYOUT_ergodox(
         // left hand
-        RESET, KC_6, KC_7, KC_8, KC_9, KC_0, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_MS_WH_UP, KC_MS_WH_LEFT, KC_MS_WH_RIGHT, DYN_MACRO_PLAY1, DYN_MACRO_PLAY2, KC_TRANSPARENT,
-        KC_TRANSPARENT, KC_MS_WH_DOWN, KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3, KC_ENTER,
+        RESET, KC_6, KC_7, KC_8, KC_9, KC_0, KC_ENTER,
+        KC_TRANSPARENT, KC_MS_WH_LEFT, KC_MS_WH_RIGHT, KC_TRANSPARENT, DYN_MACRO_PLAY1, DYN_MACRO_PLAY2, KC_TRANSPARENT,
+        KC_TRANSPARENT, KC_MS_WH_DOWN, KC_MS_WH_UP, KC_MS_BTN1, KC_MS_BTN3, KC_MS_BTN2,
         KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_BSPACE, KC_TRANSPARENT,
         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
         MC_MPORT_ACTIVATE, KC_TRANSPARENT, OSL(L_FKEYS),
